@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FLUNEWS">
+<title>FLUNEWS</title>
+<link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Fluminense_fc_logo.svg/200px-Fluminense_fc_logo.svg.png">
+<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Fluminense_fc_logo.svg/200px-Fluminense_fc_logo.svg.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:#f4f4f4;color:#222;-webkit-text-size-adjust:100%}
+.header{background:linear-gradient(135deg,#1a5c2e 60%,#0f3d1e);padding:14px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
+.header img{width:42px;height:42px;object-fit:contain}
+.header h1{color:#fff;font-size:20px;font-weight:700;letter-spacing:2px}
+.header .date{color:rgba(255,255,255,.65);font-size:11px}
+.header .upd{color:rgba(255,255,255,.5);font-size:10px;margin-left:auto;text-align:right;white-space:nowrap}
+.tabs{display:flex;border-bottom:2px solid #e0e0e0;background:#fff;position:sticky;top:70px;z-index:9}
+.tab{flex:1;padding:10px 0;font-size:12px;font-weight:600;border:none;background:none;cursor:pointer;color:#999;border-bottom:3px solid transparent;transition:.15s}
+.tab.on{color:#1a5c2e;border-bottom-color:#1a5c2e}
+.wrap{padding:14px;max-width:680px;margin:0 auto}
+.srcs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.srcs a{display:flex;align-items:center;gap:5px;background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:5px 10px;text-decoration:none;font-size:11px;color:#222;font-weight:500}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.card{background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:12px 14px;margin-bottom:8px}
+.card .row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:5px}
+.badge{font-size:10px;padding:2px 8px;border-radius:8px;color:#fff;font-weight:600}
+.tm{font-size:10px;color:#aaa}
+.card h3{font-size:14px;font-weight:600;line-height:1.4}
+.card h3 a{color:#222;text-decoration:none}
+.card h3 a:hover{color:#1a5c2e}
+.info{text-align:center;padding:40px 16px;color:#888;font-size:13px}
+.spin{display:inline-block;width:18px;height:18px;border:2px solid #e0e0e0;border-top-color:#1a5c2e;border-radius:50%;animation:sp .6s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.err{background:#fff3f3;color:#c62828;padding:10px 14px;border-radius:8px;margin-bottom:10px;font-size:12px}
+.ft{text-align:center;padding:16px 0;margin-top:16px;border-top:1px solid #e0e0e0;font-size:10px;color:#aaa}
+.cnt{font-size:11px;color:#999;margin-bottom:10px}
+.retry{background:#1a5c2e;color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:12px;font-weight:600;cursor:pointer;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="header">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Fluminense_fc_logo.svg/200px-Fluminense_fc_logo.svg.png" alt="FLU">
+  <div><h1>FLUNEWS</h1><div class="date" id="dt"></div></div>
+  <div class="upd" id="upd"></div>
+</div>
+<div class="tabs">
+  <button class="tab on" data-t="all">📰 Todas</button>
+  <button class="tab" data-t="lance">🔴 Lance!</button>
+  <button class="tab" data-t="netflu">🟢 NETFLU</button>
+</div>
+<div class="wrap" id="out"></div>
+
+<script>
+const R2J = "https://api.rss2json.com/v1/api.json?rss_url=";
+const FEEDS = [
+  {key:"lance", name:"Lance!", color:"#c62828", rss:"https://www.lance.com.br/fluminense/feed/"},
+  {key:"netflu", name:"NETFLU", color:"#1a5c2e", rss:"https://www.netflu.com.br/feed/"}
+];
+
+var all = [], tab = "all", errors = [];
+
+document.getElementById("dt").textContent = new Date().toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+
+document.querySelector(".tabs").addEventListener("click", function(e){
+  var b = e.target.closest(".tab");
+  if(!b) return;
+  tab = b.dataset.t;
+  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("on")});
+  b.classList.add("on");
+  render();
+});
+
+function render(){
+  var o = document.getElementById("out");
+  if(all.length === 0 && errors.length === 0){
+    o.innerHTML = '<div class="info"><span class="spin"></span> Buscando notícias do Tricolor...</div>';
+    return;
+  }
+
+  var items = tab === "all" ? all : all.filter(function(n){return n.key === tab});
+  var h = '';
+
+  h += '<div class="srcs">';
+  h += '<a href="https://ge.globo.com/futebol/times/fluminense/" target="_blank"><span class="dot" style="background:#127a3e"></span>GE ↗</a>';
+  h += '<a href="https://www.lance.com.br/fluminense/" target="_blank"><span class="dot" style="background:#c62828"></span>Lance! ↗</a>';
+  h += '<a href="https://www.netflu.com.br/" target="_blank"><span class="dot" style="background:#1a5c2e"></span>NETFLU ↗</a>';
+  h += '</div>';
+
+  if(errors.length > 0){
+    h += '<div class="err">' + errors.join("<br>") + '</div>';
+  }
+
+  if(items.length === 0){
+    h += '<div class="info">Nenhuma notícia encontrada nesta fonte.</div>';
+  } else {
+    h += '<div class="cnt">' + items.length + ' notícias</div>';
+    for(var i = 0; i < items.length; i++){
+      var n = items[i];
+      h += '<div class="card">';
+      h += '<div class="row"><span class="badge" style="background:'+n.color+'">'+n.source+'</span><span class="tm">'+n.time+'</span></div>';
+      h += '<h3><a href="'+n.url+'" target="_blank" rel="noopener">'+n.title+'</a></h3>';
+      h += '</div>';
+    }
+  }
+
+  h += '<div class="ft">FLUNEWS • Atualização automática via RSS<br>Fontes: Lance! e NETFLU</div>';
+  o.innerHTML = h;
+}
+
+function fetchFeed(feed){
+  var url = R2J + encodeURIComponent(feed.rss);
+  return fetch(url)
+    .then(function(r){
+      if(!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    })
+    .then(function(data){
+      if(data.status !== "ok" || !data.items) throw new Error("Feed inválido");
+      var news = [];
+      for(var i = 0; i < data.items.length; i++){
+        var item = data.items[i];
+        var t = (item.title || "").toLowerCase();
+        var isFlu = feed.key === "netflu" || t.indexOf("flumin") > -1 || t.indexOf("tricolor") > -1 || t.indexOf("zubeldi") > -1 || t.indexOf("laranjeiras") > -1;
+        if(isFlu && item.title){
+          var d = new Date(item.pubDate);
+          var ds = d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});
+          var ts = d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+          news.push({
+            title: item.title,
+            url: item.link,
+            time: ds + " " + ts,
+            date: d,
+            source: feed.name,
+            color: feed.color,
+            key: feed.key
+          });
+        }
+      }
+      return news;
+    })
+    .catch(function(e){
+      errors.push("Erro ao buscar " + feed.name + ": " + e.message);
+      return [];
+    });
+}
+
+function loadAll(){
+  render(); // show spinner
+  var promises = [];
+  for(var i = 0; i < FEEDS.length; i++){
+    promises.push(fetchFeed(FEEDS[i]));
+  }
+  Promise.all(promises).then(function(results){
+    all = [];
+    for(var i = 0; i < results.length; i++){
+      for(var j = 0; j < results[i].length; j++){
+        all.push(results[i][j]);
+      }
+    }
+    all.sort(function(a,b){return b.date - a.date});
+    document.getElementById("upd").innerHTML = "Atualizado<br>" + new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+    render();
+  });
+}
+
+loadAll();
+</script>
+</body>
+</html>
