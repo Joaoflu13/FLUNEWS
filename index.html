@@ -10,155 +10,216 @@
 <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Fluminense_fc_logo.svg/200px-Fluminense_fc_logo.svg.png">
 <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Fluminense_fc_logo.svg/200px-Fluminense_fc_logo.svg.png">
 <style>
+:root{--green:#1a5c2e;--garnet:#8b1a2e;--dark:#0f1a0f}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,-apple-system,sans-serif;background:#f4f4f4;color:#222}
-.hd{background:linear-gradient(135deg,#1a5c2e 60%,#0f3d1e);padding:14px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
-.hd img{width:44px;height:44px;object-fit:contain}
-.hd h1{color:#fff;font-size:22px;font-weight:700;letter-spacing:2px}
-.hd .dt{color:rgba(255,255,255,.65);font-size:11px}
-.tabs{display:flex;border-bottom:2px solid #e0e0e0;background:#fff;position:sticky;top:70px;z-index:9}
-.tb{flex:1;padding:10px 0;font-size:12px;font-weight:600;border:none;background:none;cursor:pointer;color:#999;border-bottom:3px solid transparent}
-.tb.on{color:#1a5c2e;border-bottom-color:#1a5c2e}
-.wrap{padding:14px;max-width:700px;margin:0 auto}
-.srcs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.srcs a{display:flex;align-items:center;gap:5px;background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:5px 10px;text-decoration:none;font-size:11px;color:#222;font-weight:500}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--dark);color:#e0e0e0;min-height:100vh}
+a{color:inherit;text-decoration:none}
+
+/* HEADER */
+.hd{background:linear-gradient(135deg,var(--green) 0%,#0d2e18 100%);padding:14px 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:20;border-bottom:2px solid rgba(255,255,255,.08)}
+.hd img{width:50px;height:50px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}
+.hd h1{font-size:26px;font-weight:800;letter-spacing:3px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.3)}
+.hd .sub{font-size:11px;color:rgba(255,255,255,.55)}
+.hd .live{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:11px;color:#4caf50}
+.hd .live .pulse{width:8px;height:8px;border-radius:50%;background:#4caf50;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* TICKER */
+.ticker{background:var(--garnet);overflow:hidden;white-space:nowrap;font-size:12px;font-weight:600;color:#fff;padding:6px 0}
+.ticker-inner{display:inline-block;animation:scroll 30s linear infinite}
+@keyframes scroll{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+.ticker-inner span{margin:0 40px}
+
+/* SOURCES BAR */
+.src-bar{display:flex;gap:8px;flex-wrap:wrap;padding:12px 20px;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06)}
+.src-bar a{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:500;transition:.2s}
+.src-bar a:hover{background:rgba(255,255,255,.12)}
 .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
-.syn{background:linear-gradient(135deg,#8b1a2e,#5a0f1e);border-radius:12px;padding:14px 16px;margin-bottom:14px}
-.syn .lb{color:rgba(255,255,255,.8);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
-.syn p{color:#fff;font-size:14px;line-height:1.8}
+
+/* LAYOUT */
+.main{padding:16px 20px;max-width:1400px;margin:0 auto}
+.top-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+@media(max-width:900px){.top-row{grid-template-columns:1fr}}
+.bottom-row{display:grid;grid-template-columns:1fr;gap:14px}
+.col-left{min-width:0}
+.col-right{display:flex;flex-direction:column;gap:14px}
+.side-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:900px){.side-grid{grid-template-columns:1fr}}
+
+/* SECTION TITLES */
+.sec{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.sec h2{font-size:15px;font-weight:700;color:#fff}
+.sec .line{flex:1;height:1px;background:rgba(255,255,255,.1)}
+
+/* SYNTHESIS */
+.syn{background:linear-gradient(135deg,var(--garnet),#4a0e1a);border-radius:14px;padding:16px 18px;margin-bottom:14px;border:1px solid rgba(255,255,255,.08)}
+.syn .lb{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.6);margin-bottom:8px}
+.syn p{font-size:14px;line-height:1.8;color:rgba(255,255,255,.9)}
+
+/* FILTERS */
 .flt{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.flt button{padding:4px 12px;border-radius:20px;border:1.5px solid #e0e0e0;background:#fff;font-size:11px;font-weight:500;cursor:pointer;color:#222}
-.flt button.on{color:#fff}
-.card{background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:12px 14px;margin-bottom:8px;position:relative}
-.card.feat{border:2px solid #8b1a2e}
-.card .fb{position:absolute;top:-1px;right:14px;background:#8b1a2e;color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:0 0 8px 8px}
-.card .row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:5px}
-.badge{font-size:10px;padding:2px 8px;border-radius:8px;color:#fff;font-weight:600}
-.tm{font-size:10px;color:#aaa}
-.card h3{font-size:14px;font-weight:600;line-height:1.4;margin-bottom:3px}
-.card h3 a{color:#222;text-decoration:none}
-.card h3 a:hover{color:#1a5c2e}
-.card .sm{font-size:13px;color:#666;line-height:1.6}
-.card .lnk{font-size:11px;color:#1a5c2e;text-decoration:none;font-weight:600;margin-top:4px;display:inline-block}
-.game{background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:12px 16px;margin-bottom:8px;position:relative}
-.game.next{border:2px solid #1a5c2e}
-.game .nb{position:absolute;top:-1px;right:14px;background:#1a5c2e;color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:0 0 8px 8px}
-.game .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.game .mid{display:flex;align-items:center;justify-content:center;gap:12px}
-.game .t{flex:1;font-size:14px}
-.game .t.flu{font-weight:700;color:#1a5c2e}
-.game .t.r{text-align:right}
-.game .ctr{text-align:center;min-width:60px}
-.game .sc{font-size:18px;font-weight:700}
-.game .hr{font-size:14px;font-weight:600;color:#666}
-.game .dd{font-size:11px;color:#999}
-.tbl{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:20px}
-.tbl th{padding:6px 4px;text-align:center;color:#888;font-weight:500;font-size:11px;border-bottom:2px solid #e0e0e0}
-.tbl th:nth-child(2){text-align:left}
-.tbl td{padding:7px 4px;text-align:center;border-bottom:1px solid #f0f0f0}
-.tbl td:nth-child(2){text-align:left}
-.tbl tr.flu{background:rgba(26,92,46,.07)}
-.tbl td.tn{font-weight:600}
-.tbl td.flu-n{font-weight:700;color:#1a5c2e}
-.lg{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
-.lg span{display:flex;align-items:center;gap:4px;font-size:10px;color:#888}
-.lg .lb{width:10px;height:4px;border-radius:2px}
-.hi{background:linear-gradient(135deg,#1a5c2e,#0f3d1e);border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;gap:20px;flex-wrap:wrap}
-.hi .col{flex:1;min-width:130px}
-.hi .col .lb{color:rgba(255,255,255,.65);font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
-.hi .col .big{font-size:26px;font-weight:700;color:#fff}
-.hi .col .big.red{color:#ff6b6b}
-.hi .col .sub{color:rgba(255,255,255,.75);font-size:12px}
-.ft{text-align:center;padding:16px 0;margin-top:16px;border-top:1px solid #e0e0e0;font-size:10px;color:#aaa}
-.sec-t{font-size:13px;font-weight:600;margin-bottom:6px}
-.cnt{font-size:11px;color:#999;margin-bottom:10px}
-.hidden{display:none}
+.flt button{padding:5px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);font-size:11px;font-weight:600;cursor:pointer;color:rgba(255,255,255,.7);transition:.2s}
+.flt button:hover{background:rgba(255,255,255,.1)}
+.flt button.on{background:var(--green);border-color:var(--green);color:#fff}
+
+/* NEWS CARDS */
+.ncard{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 14px;margin-bottom:8px;transition:.2s;cursor:default;position:relative}
+.ncard:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.15);transform:translateY(-1px)}
+.ncard.feat{border:1.5px solid var(--garnet);box-shadow:0 0 20px rgba(139,26,46,.2)}
+.ncard .fb{position:absolute;top:-1px;right:14px;background:var(--garnet);color:#fff;font-size:9px;font-weight:700;padding:2px 10px;border-radius:0 0 8px 8px;letter-spacing:.5px}
+.ncard .row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.badge{font-size:10px;padding:2px 9px;border-radius:8px;color:#fff;font-weight:600}
+.tm{font-size:10px;color:rgba(255,255,255,.35)}
+.ncard h3{font-size:14px;font-weight:600;line-height:1.4;color:#fff;margin-bottom:4px}
+.ncard h3 a:hover{color:#4caf50}
+.ncard .sm{font-size:12px;color:rgba(255,255,255,.5);line-height:1.6}
+.ncard .lnk{font-size:11px;color:#4caf50;font-weight:600;margin-top:6px;display:inline-block}
+.ncard .lnk:hover{text-decoration:underline}
+
+/* GAME CARDS */
+.gcard{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 14px;margin-bottom:6px;transition:.2s;position:relative}
+.gcard:hover{background:rgba(255,255,255,.07)}
+.gcard.next{border:1.5px solid var(--green);box-shadow:0 0 16px rgba(26,92,46,.2)}
+.gcard .nb{position:absolute;top:-1px;right:12px;background:var(--green);color:#fff;font-size:8px;font-weight:700;padding:2px 8px;border-radius:0 0 6px 6px;letter-spacing:.5px}
+.gcard .gtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.gcard .gmid{display:flex;align-items:center;justify-content:center;gap:8px}
+.gcard .gt{flex:1;font-size:13px;color:rgba(255,255,255,.8)}
+.gcard .gt.flu{font-weight:700;color:#4caf50}
+.gcard .gt.r{text-align:right}
+.gcard .gctr{text-align:center;min-width:55px}
+.gcard .gsc{font-size:16px;font-weight:700;color:#fff}
+.gcard .ghr{font-size:13px;font-weight:600;color:rgba(255,255,255,.5)}
+.gcard .gdd{font-size:10px;color:rgba(255,255,255,.3)}
+
+/* TABLE PANEL */
+.tpanel{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;overflow-x:auto}
+.tpanel h3{font-size:13px;font-weight:700;color:#fff;margin-bottom:8px}
+.stbl{width:100%;border-collapse:collapse;font-size:11px}
+.stbl th{padding:5px 3px;text-align:center;color:rgba(255,255,255,.4);font-weight:500;font-size:10px;border-bottom:1px solid rgba(255,255,255,.1)}
+.stbl th:nth-child(2){text-align:left}
+.stbl td{padding:5px 3px;text-align:center;border-bottom:1px solid rgba(255,255,255,.04);color:rgba(255,255,255,.7)}
+.stbl td:nth-child(2){text-align:left}
+.stbl tr.flu-r{background:rgba(26,92,46,.12)}
+.stbl td.fn{font-weight:700;color:#4caf50}
+.stbl td.pts{font-weight:700;color:#fff}
+.lg{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.lg span{display:flex;align-items:center;gap:4px;font-size:9px;color:rgba(255,255,255,.4)}
+.lg .lb{width:8px;height:3px;border-radius:2px}
+.hi-card{background:linear-gradient(135deg,var(--green),#0d2e18);border-radius:12px;padding:14px;display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px;border:1px solid rgba(255,255,255,.08)}
+.hi-card .hcol{flex:1;min-width:120px}
+.hi-card .hcol .hlb{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.5);margin-bottom:2px}
+.hi-card .hcol .hbig{font-size:24px;font-weight:800;color:#fff}
+.hi-card .hcol .hbig.red{color:#ff6b6b}
+.hi-card .hcol .hsub{font-size:11px;color:rgba(255,255,255,.6)}
+
+/* RSS SECTION */
+#rssNews .rss-card{background:rgba(76,175,80,.06);border:1px solid rgba(76,175,80,.15);border-radius:10px;padding:10px 12px;margin-bottom:6px}
+#rssNews .rss-card:hover{background:rgba(76,175,80,.1)}
+#rssNews h3{font-size:13px;font-weight:600;color:#fff;line-height:1.4}
+#rssNews h3 a:hover{color:#4caf50}
+
+/* FOOTER */
+.ft{text-align:center;padding:20px;font-size:10px;color:rgba(255,255,255,.2);border-top:1px solid rgba(255,255,255,.05);margin-top:20px}
 </style>
 </head>
 <body>
+
+<!-- HEADER -->
 <div class="hd">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Fluminense_fc_logo.svg/200px-Fluminense_fc_logo.svg.png" alt="Flu">
-  <div><h1>FLUNEWS</h1><div class="dt" id="dateEl"></div></div>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Fluminense_fc_logo.svg/200px-Fluminense_fc_logo.svg.png" alt="Fluminense FC">
+  <div>
+    <h1>FLUNEWS</h1>
+    <div class="sub" id="dateEl"></div>
+  </div>
+  <div class="live"><div class="pulse"></div> Ao vivo</div>
 </div>
 
-<div class="tabs">
-  <button class="tb on" onclick="showTab('news',this)">📰 Notícias</button>
-  <button class="tb" onclick="showTab('cal',this)">📅 Jogos</button>
-  <button class="tb" onclick="showTab('table',this)">🏆 Classificação</button>
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <span>🟢 HULK É DO FLUMINENSE! Atacante assina até 2027 e vestirá a camisa 7</span>
+    <span>⚽ HOJE: Independiente Rivadavia x Fluminense — 21h30 — Libertadores</span>
+    <span>📊 Brasileirão: Fluminense em 3º lugar com 26 pontos</span>
+    <span>🏆 Libertadores Grupo C: Flu precisa vencer para seguir vivo</span>
+    <span>🔴 Zubeldía pode ser demitido em caso de derrota hoje</span>
+  </div>
 </div>
 
-<!-- NOTÍCIAS -->
-<div class="wrap" id="tab-news">
-  <div class="srcs">
-    <a href="https://ge.globo.com/futebol/times/fluminense/" target="_blank"><span class="dot" style="background:#127a3e"></span>GE / Globo Esporte ↗</a>
-    <a href="https://www.lance.com.br/fluminense/" target="_blank"><span class="dot" style="background:#c62828"></span>Lance! ↗</a>
-    <a href="https://www.netflu.com.br/" target="_blank"><span class="dot" style="background:#1a5c2e"></span>NETFLU ↗</a>
-  </div>
-  <div class="syn">
-    <div class="lb">Síntese do Dia</div>
-    <p>A grande bomba do dia é a oficialização de Hulk como reforço do Fluminense! O atacante de 39 anos assinou até dezembro de 2027 e vestirá a camisa 7 — a apresentação será no Maracanã dia 16/05 contra o São Paulo. Mas o foco imediato é a Libertadores: nesta quarta (06/05) às 21h30, o Tricolor enfrenta o Independiente Rivadavia em Mendoza em jogo de vida ou morte. Zubeldía prepara mudanças na escalação e Lucho Acosta pode reforçar o time. A pressão segue alta: em caso de derrota, o técnico deve ser demitido, com Felipe Melo cotado como substituto.</p>
-  </div>
-  <div class="flt">
-    <button class="on" style="background:#1a5c2e;border-color:#1a5c2e" onclick="filterCat('Todos',this)">Todos</button>
-    <button onclick="filterCat('Jogos',this)">Jogos</button>
-    <button onclick="filterCat('Transferências',this)">Transferências</button>
-    <button onclick="filterCat('Bastidores',this)">Bastidores</button>
-  </div>
-  <div id="newsContainer"></div>
-  <div id="rssNews"></div>
-  <div class="ft">FLUNEWS • Notícias via RSS atualizadas automaticamente ao abrir</div>
+<!-- SOURCES -->
+<div class="src-bar">
+  <a href="https://ge.globo.com/futebol/times/fluminense/" target="_blank"><span class="dot" style="background:#127a3e"></span> GE / Globo Esporte ↗</a>
+  <a href="https://www.lance.com.br/fluminense/" target="_blank"><span class="dot" style="background:#c62828"></span> Lance! ↗</a>
+  <a href="https://www.netflu.com.br/" target="_blank"><span class="dot" style="background:#1a5c2e"></span> NETFLU ↗</a>
 </div>
 
-<!-- CALENDÁRIO -->
-<div class="wrap hidden" id="tab-cal">
-  <div class="lg">
-    <span><span class="lb" style="background:#1b5e20"></span>Libertadores</span>
-    <span><span class="lb" style="background:#f9a825"></span>Brasileirão</span>
-    <span><span class="lb" style="background:#0d47a1"></span>Copa do Brasil</span>
+<!-- MAIN -->
+<div class="main">
+  <!-- TOP: NEWS full width -->
+  <div class="top-row">
+    <div class="col-left">
+      <div class="syn">
+        <div class="lb">📋 Síntese do Dia</div>
+        <p>A grande bomba do dia é a oficialização de Hulk como reforço do Fluminense! O atacante de 39 anos assinou até dezembro de 2027 e vestirá a camisa 7 — a apresentação será no Maracanã dia 16/05 contra o São Paulo. Mas o foco imediato é a Libertadores: nesta quarta (06/05) às 21h30, o Tricolor enfrenta o Independiente Rivadavia em Mendoza em jogo de vida ou morte. Zubeldía prepara mudanças na escalação e Lucho Acosta pode reforçar o time. A pressão segue alta: em caso de derrota, o técnico deve ser demitido, com Felipe Melo cotado como substituto.</p>
+      </div>
+      <div class="flt">
+        <button class="on" onclick="filterCat('Todos',this)">Todos</button>
+        <button onclick="filterCat('Jogos',this)">⚽ Jogos</button>
+        <button onclick="filterCat('Transferências',this)">🔄 Transferências</button>
+        <button onclick="filterCat('Bastidores',this)">🎭 Bastidores</button>
+      </div>
+      <div id="newsContainer"></div>
+      <div id="rssNews"></div>
+    </div>
+
+    <!-- NEXT GAME + CALENDAR -->
+    <div class="col-right">
+      <div style="background:linear-gradient(135deg,var(--green),#0d2e18);border-radius:14px;padding:16px;border:1px solid rgba(76,175,80,.2);text-align:center">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.5);margin-bottom:6px">Próximo Jogo — Libertadores</div>
+        <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:4px">Rivadavia x Fluminense</div>
+        <div style="font-size:14px;color:#4caf50;font-weight:600">Hoje • 21h30 • Mendoza</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:4px">Flu precisa vencer para seguir vivo</div>
+      </div>
+      <div class="sec"><h2>📅 Calendário</h2><div class="line"></div></div>
+      <div id="calContainer"></div>
+    </div>
   </div>
-  <div class="cnt">Maio 2026 — 8 jogos restantes</div>
-  <div id="calContainer"></div>
-  <div class="ft">FLUNEWS • Calendário atualizado</div>
+
+  <!-- BOTTOM: CLASSIFICATION side by side -->
+  <div class="sec"><h2>🏆 Classificação</h2><div class="line"></div></div>
+  <div class="hi-card">
+    <div class="hcol"><div class="hlb">Brasileirão</div><div class="hbig">3º</div><div class="hsub">26 pts • 14 jogos</div></div>
+    <div class="hcol"><div class="hlb">Libertadores — Grupo C</div><div class="hbig red">4º</div><div class="hsub">1 pt • 3 jogos</div></div>
+  </div>
+  <div class="side-grid">
+    <div class="tpanel">
+      <h3>🏆 Libertadores — Grupo C</h3>
+      <div class="lg"><span><span class="lb" style="background:#1b5e20"></span>Classificado</span><span><span class="lb" style="background:#ff9800"></span>Sul-Americana</span></div>
+      <div id="libertaTable"></div>
+    </div>
+    <div class="tpanel">
+      <h3>⚽ Brasileirão 2026</h3>
+      <div class="lg"><span><span class="lb" style="background:#1b5e20"></span>Liberta</span><span><span class="lb" style="background:#4caf50"></span>Pré-Lib</span><span><span class="lb" style="background:#ff9800"></span>Sula</span><span><span class="lb" style="background:#c62828"></span>Rebaixamento</span></div>
+      <div id="brTable"></div>
+    </div>
+  </div>
 </div>
 
-<!-- CLASSIFICAÇÃO -->
-<div class="wrap hidden" id="tab-table">
-  <div class="hi">
-    <div class="col"><div class="lb">Brasileirão</div><div class="big">3º lugar</div><div class="sub">26 pontos • 14 jogos</div></div>
-    <div class="col"><div class="lb">Libertadores — Grupo C</div><div class="big red">4º lugar</div><div class="sub">1 ponto • 3 jogos</div></div>
-  </div>
-  <div class="sec-t">🏆 Libertadores 2026 — Grupo C</div>
-  <div class="lg">
-    <span><span class="lb" style="background:#1b5e20"></span>Classificado</span>
-    <span><span class="lb" style="background:#ff9800"></span>Sul-Americana</span>
-  </div>
-  <div id="libertaTable"></div>
-  <div class="sec-t">⚽ Brasileirão 2026 — Após 14ª rodada</div>
-  <div class="lg">
-    <span><span class="lb" style="background:#1b5e20"></span>Libertadores</span>
-    <span><span class="lb" style="background:#4caf50"></span>Pré-Libertadores</span>
-    <span><span class="lb" style="background:#ff9800"></span>Sul-Americana</span>
-    <span><span class="lb" style="background:#c62828"></span>Rebaixamento</span>
-  </div>
-  <div id="brTable"></div>
-  <div class="ft">FLUNEWS • Classificação atualizada</div>
-</div>
+<div class="ft">FLUNEWS © 2026 • Notícias atualizadas automaticamente via RSS • GE, Lance! e NETFLU</div>
 
 <script>
-// === DATA ===
 var NEWS = [
-  {src:"GE / Globo Esporte",color:"#127a3e",title:"Independiente Rivadavia x Fluminense: onde assistir, escalação e tudo sobre o jogo da Libertadores",sm:"O Tricolor enfrenta o Rivadavia nesta quarta (06/05) às 21h30, em Mendoza, em jogo decisivo pela 4ª rodada. Fluminense precisa vencer para seguir vivo na competição.",url:"https://ge.globo.com/futebol/times/fluminense/",cat:"Jogos",time:"06/05 14:00",feat:true},
-  {src:"GE / Globo Esporte",color:"#127a3e",title:"Globo, ESPN e GE TV definem equipes para cobertura de Rivadavia x Fluminense",sm:"Os canais que transmitirão o jogo decisivo da Libertadores já definiram suas escalas. A partida terá três opções de transmissão ao vivo.",url:"https://ge.globo.com/futebol/times/fluminense/",cat:"Jogos",time:"06/05 12:30",feat:false},
-  {src:"NETFLU",color:"#1a5c2e",title:"Previsão do tempo para Rivadavia x Fluminense: clima será favorável em Mendoza",sm:"O tempo em Mendoza será favorável ao futebol nesta quarta-feira. Confira a temperatura prevista para o horário do jogo decisivo pela Libertadores.",url:"https://www.netflu.com.br/noticias/",cat:"Jogos",time:"06/05 11:00",feat:false},
-  {src:"GE / Globo Esporte",color:"#127a3e",title:"BOMBA: Fluminense anuncia contratação do atacante Hulk até 2027",sm:"O atacante de 39 anos assinou contrato até dezembro de 2027. Hulk chega sem custos após ser liberado pelo Atlético-MG e vestirá a camisa 7. Apresentação será dia 16/05 no Maracanã.",url:"https://ge.globo.com/futebol/times/fluminense/",cat:"Transferências",time:"05/05 23:30",feat:false},
-  {src:"Lance!",color:"#c62828",title:"Hulk é do Fluminense! Atacante assina até 2027 e será apresentado contra o São Paulo",sm:"O primeiro contato com a torcida será no dia 16 de maio, no Maracanã. Hulk marcou 140 gols pelo Atlético-MG e foi titular na Copa de 2014.",url:"https://www.lance.com.br/fluminense/",cat:"Transferências",time:"05/05 23:00",feat:false},
-  {src:"NETFLU",color:"#1a5c2e",title:"Fábio manda recado para Hulk sobre o Fluminense",sm:"O goleiro tricolor gravou mensagem para o novo reforço e projeta sucesso do atacante nas Laranjeiras: 'Será muito bem recebido'.",url:"https://www.netflu.com.br/noticias/",cat:"Transferências",time:"05/05 20:00",feat:false},
-  {src:"NETFLU",color:"#1a5c2e",title:"Fluminense define quantos minutos Lucho Acosta irá jogar contra o Rivadavia",sm:"Comissão técnica estipula tempo de atuação do meia argentino, que se recuperou de lesão e viajou com a delegação para Mendoza.",url:"https://www.netflu.com.br/noticias/",cat:"Jogos",time:"05/05 18:30",feat:false},
-  {src:"NETFLU",color:"#1a5c2e",title:"Zubeldía fará várias mudanças no Flu para o duelo contra o Rivadavia; veja escalação",sm:"O técnico prepara alterações significativas no time titular para o confronto decisivo pela Libertadores nesta quarta-feira.",url:"https://www.netflu.com.br/noticias/",cat:"Jogos",time:"05/05 17:00",feat:false},
-  {src:"Lance!",color:"#c62828",title:"Fluminense abre venda de ingressos para jogos contra Vitória, Operário e São Paulo",sm:"Torcedores tricolores já podem garantir entrada para as próximas três partidas do Flu como mandante no Maracanã.",url:"https://www.lance.com.br/fluminense/",cat:"Bastidores",time:"05/05 15:00",feat:false},
-  {src:"NETFLU",color:"#1a5c2e",title:"Zubeldía deve ser demitido em caso de derrota para o Rivadavia, afirma repórter",sm:"Segundo a ESPN, a diretoria já trabalha com possibilidade de saída do treinador caso o Flu perca hoje na Argentina.",url:"https://www.netflu.com.br/noticias/",cat:"Bastidores",time:"05/05 14:20",feat:false},
-  {src:"NETFLU",color:"#1a5c2e",title:"Felipe Melo ganha força entre conselheiros para substituir Zubeldía",sm:"Bastidores das Laranjeiras indicam que o ex-volante é cogitado para assumir o comando técnico em caso de eliminação.",url:"https://www.netflu.com.br/noticias/",cat:"Bastidores",time:"05/05 13:00",feat:false},
-  {src:"GE / Globo Esporte",color:"#127a3e",title:"Fluminense perde para o Internacional por 2 a 0 pelo Brasileirão",sm:"Com falhas defensivas e ataque inofensivo, o Tricolor foi derrotado no Beira-Rio pela 14ª rodada. Pressão sobre Zubeldía aumenta.",url:"https://ge.globo.com/futebol/times/fluminense/",cat:"Jogos",time:"03/05 20:30",feat:false}
+  {src:"GE / Globo Esporte",color:"#127a3e",title:"Independiente Rivadavia x Fluminense: onde assistir, escalação e tudo sobre o jogo da Libertadores",sm:"O Tricolor enfrenta o Rivadavia nesta quarta (06/05) às 21h30, em Mendoza, em jogo decisivo pela 4ª rodada. Fluminense precisa vencer para seguir vivo.",url:"https://ge.globo.com/futebol/times/fluminense/",cat:"Jogos",time:"06/05 14:00",feat:true},
+  {src:"GE / Globo Esporte",color:"#127a3e",title:"Globo, ESPN e GE TV definem equipes para cobertura de Rivadavia x Fluminense",sm:"Os canais que transmitirão o jogo decisivo da Libertadores já definiram suas escalas de transmissão.",url:"https://ge.globo.com/futebol/times/fluminense/",cat:"Jogos",time:"06/05 12:30",feat:false},
+  {src:"NETFLU",color:"#1a5c2e",title:"Previsão do tempo para Rivadavia x Fluminense: clima favorável em Mendoza",sm:"O tempo em Mendoza será favorável ao futebol nesta quarta-feira. Confira a temperatura para o horário do jogo.",url:"https://www.netflu.com.br/noticias/",cat:"Jogos",time:"06/05 11:00",feat:false},
+  {src:"GE / Globo Esporte",color:"#127a3e",title:"BOMBA: Fluminense anuncia contratação do atacante Hulk até 2027",sm:"Atacante de 39 anos assinou até dezembro de 2027. Hulk chega sem custos após ser liberado pelo Atlético-MG e vestirá a camisa 7. Apresentação dia 16/05.",url:"https://ge.globo.com/futebol/times/fluminense/",cat:"Transferências",time:"05/05 23:30",feat:false},
+  {src:"Lance!",color:"#c62828",title:"Hulk é do Fluminense! Atacante assina até 2027 e será apresentado contra o São Paulo",sm:"Primeiro contato com a torcida será no dia 16 de maio, no Maracanã. Hulk marcou 140 gols pelo Atlético-MG.",url:"https://www.lance.com.br/fluminense/",cat:"Transferências",time:"05/05 23:00",feat:false},
+  {src:"NETFLU",color:"#1a5c2e",title:"Fábio manda recado para Hulk sobre o Fluminense",sm:"O goleiro tricolor gravou mensagem para o novo reforço: 'Será muito bem recebido'.",url:"https://www.netflu.com.br/noticias/",cat:"Transferências",time:"05/05 20:00",feat:false},
+  {src:"NETFLU",color:"#1a5c2e",title:"Fluminense define quantos minutos Lucho Acosta irá jogar contra o Rivadavia",sm:"Comissão técnica estipula tempo de atuação do meia argentino, que se recuperou de lesão.",url:"https://www.netflu.com.br/noticias/",cat:"Jogos",time:"05/05 18:30",feat:false},
+  {src:"NETFLU",color:"#1a5c2e",title:"Zubeldía fará várias mudanças no Flu para o Rivadavia; veja escalação",sm:"O técnico prepara alterações no time titular para o confronto decisivo pela Libertadores.",url:"https://www.netflu.com.br/noticias/",cat:"Jogos",time:"05/05 17:00",feat:false},
+  {src:"Lance!",color:"#c62828",title:"Fluminense abre venda de ingressos para Vitória, Operário e São Paulo",sm:"Torcedores já podem garantir entrada para as próximas três partidas como mandante no Maracanã.",url:"https://www.lance.com.br/fluminense/",cat:"Bastidores",time:"05/05 15:00",feat:false},
+  {src:"NETFLU",color:"#1a5c2e",title:"Zubeldía deve ser demitido em caso de derrota, afirma repórter",sm:"ESPN informa que diretoria trabalha com possibilidade de saída do técnico caso Flu perca hoje.",url:"https://www.netflu.com.br/noticias/",cat:"Bastidores",time:"05/05 14:20",feat:false},
+  {src:"NETFLU",color:"#1a5c2e",title:"Felipe Melo ganha força para substituir Zubeldía",sm:"Conselheiros indicam o ex-volante como opção para assumir o comando técnico em caso de eliminação.",url:"https://www.netflu.com.br/noticias/",cat:"Bastidores",time:"05/05 13:00",feat:false},
+  {src:"GE / Globo Esporte",color:"#127a3e",title:"Fluminense perde para o Internacional por 2 a 0 pelo Brasileirão",sm:"Derrota no Beira-Rio pela 14ª rodada. Falhas defensivas e pressão sobre Zubeldía aumentam.",url:"https://ge.globo.com/futebol/times/fluminense/",cat:"Jogos",time:"03/05 20:30",feat:false}
 ];
 
 var CALENDAR = [
@@ -203,81 +264,65 @@ var BRASILEIRAO = [
   {p:20,t:"Coritiba",pts:9,j:14,v:2,e:3,d:9,sg:-19}
 ];
 
-var compColors = {"Libertadores":"#1b5e20","Brasileirão":"#f9a825","Copa do Brasil":"#0d47a1"};
-var currentCat = "Todos";
+var compColors={"Libertadores":"#1b5e20","Brasileirão":"#f9a825","Copa do Brasil":"#0d47a1"};
+var currentCat="Todos";
 
-// === DATE ===
-document.getElementById("dateEl").textContent = new Date().toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+document.getElementById("dateEl").textContent=new Date().toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
 
-// === TABS ===
-function showTab(id, btn){
-  document.querySelectorAll(".tb").forEach(function(b){b.classList.remove("on")});
+function filterCat(cat,btn){
+  currentCat=cat;
+  document.querySelectorAll(".flt button").forEach(function(b){b.classList.remove("on")});
   btn.classList.add("on");
-  document.getElementById("tab-news").classList.add("hidden");
-  document.getElementById("tab-cal").classList.add("hidden");
-  document.getElementById("tab-table").classList.add("hidden");
-  document.getElementById("tab-"+id).classList.remove("hidden");
-}
-
-// === FILTER ===
-function filterCat(cat, btn){
-  currentCat = cat;
-  document.querySelectorAll(".flt button").forEach(function(b){b.classList.remove("on");b.style.background="#fff";b.style.borderColor="#e0e0e0";b.style.color="#222"});
-  btn.classList.add("on");
-  btn.style.background="#1a5c2e";btn.style.borderColor="#1a5c2e";btn.style.color="#fff";
   renderNews();
 }
 
-// === RENDER NEWS ===
 function renderNews(){
-  var items = currentCat === "Todos" ? NEWS : NEWS.filter(function(n){return n.cat === currentCat});
-  var h = "";
+  var items=currentCat==="Todos"?NEWS:NEWS.filter(function(n){return n.cat===currentCat});
+  var h="";
   for(var i=0;i<items.length;i++){
-    var n = items[i];
-    h += '<div class="card'+(n.feat?" feat":"")+'">';
-    if(n.feat) h += '<div class="fb">EM DESTAQUE</div>';
-    h += '<div class="row"><span class="badge" style="background:'+n.color+'">'+n.src+'</span>';
-    if(n.cat) {var catC=n.cat==="Jogos"?"#1565c0":n.cat==="Transferências"?"#6a1b9a":"#e65100"; h += '<span class="badge" style="background:'+catC+'">'+n.cat+'</span>';}
-    h += '<span class="tm">'+n.time+'</span></div>';
-    h += '<h3><a href="'+n.url+'" target="_blank">'+n.title+'</a></h3>';
-    h += '<div class="sm">'+n.sm+'</div>';
-    h += '<a class="lnk" href="'+n.url+'" target="_blank">Ler matéria ↗</a>';
-    h += '</div>';
+    var n=items[i];
+    var catC=n.cat==="Jogos"?"#1565c0":n.cat==="Transferências"?"#6a1b9a":"#e65100";
+    h+='<div class="ncard'+(n.feat?" feat":"")+'">';
+    if(n.feat) h+='<div class="fb">EM DESTAQUE</div>';
+    h+='<div class="row"><span class="badge" style="background:'+n.color+'">'+n.src+'</span>';
+    h+='<span class="badge" style="background:'+catC+'">'+n.cat+'</span>';
+    h+='<span class="tm">'+n.time+'</span></div>';
+    h+='<h3><a href="'+n.url+'" target="_blank">'+n.title+'</a></h3>';
+    h+='<div class="sm">'+n.sm+'</div>';
+    h+='<a class="lnk" href="'+n.url+'" target="_blank">Ler matéria ↗</a>';
+    h+='</div>';
   }
-  document.getElementById("newsContainer").innerHTML = h;
+  document.getElementById("newsContainer").innerHTML=h;
 }
 
-// === RENDER CALENDAR ===
 function renderCal(){
-  var h = "";
-  var foundNext = false;
+  var h="",foundNext=false;
   for(var i=0;i<CALENDAR.length;i++){
-    var g = CALENDAR[i];
-    var isNext = !g.done && !foundNext;
-    if(isNext) foundNext = true;
-    var cc = compColors[g.comp] || "#1a5c2e";
-    var tc = cc === "#f9a825" ? "#333" : "#fff";
-    h += '<div class="game'+(isNext?" next":"")+'">';
-    if(isNext) h += '<div class="nb">PRÓXIMO JOGO</div>';
-    h += '<div class="top"><span class="badge" style="background:'+cc+';color:'+tc+'">'+g.comp+'</span><span class="tm">'+g.rnd+'</span></div>';
-    h += '<div class="mid">';
-    h += '<div class="t r'+(g.home==="Fluminense"?" flu":"")+'">'+g.home+'</div>';
-    h += '<div class="ctr">';
-    if(g.done) h += '<div class="sc">'+g.sc+'</div>';
-    else h += '<div class="hr">'+g.h+'</div>';
-    h += '<div class="dd">'+g.day+', '+g.d+'</div></div>';
-    h += '<div class="t'+(g.away==="Fluminense"?" flu":"")+'">'+g.away+'</div>';
-    h += '</div></div>';
+    var g=CALENDAR[i];
+    var isNext=!g.done&&!foundNext;
+    if(isNext) foundNext=true;
+    var cc=compColors[g.comp]||"#1a5c2e";
+    var tc=cc==="#f9a825"?"#333":"#fff";
+    h+='<div class="gcard'+(isNext?" next":"")+'">';
+    if(isNext) h+='<div class="nb">PRÓXIMO</div>';
+    h+='<div class="gtop"><span class="badge" style="background:'+cc+';color:'+tc+'">'+g.comp+'</span><span class="tm">'+g.rnd+'</span></div>';
+    h+='<div class="gmid">';
+    h+='<div class="gt r'+(g.home==="Fluminense"?" flu":"")+'">'+g.home+'</div>';
+    h+='<div class="gctr">';
+    if(g.done) h+='<div class="gsc">'+g.sc+'</div>';
+    else h+='<div class="ghr">'+g.h+'</div>';
+    h+='<div class="gdd">'+g.day+' '+g.d+'</div></div>';
+    h+='<div class="gt'+(g.away==="Fluminense"?" flu":"")+'">'+g.away+'</div>';
+    h+='</div></div>';
   }
-  document.getElementById("calContainer").innerHTML = h;
+  document.getElementById("calContainer").innerHTML=h;
 }
 
-// === RENDER TABLE ===
-function makeTable(data, zones){
-  var h = '<table class="tbl"><thead><tr><th>#</th><th>Time</th><th>P</th><th>J</th><th>V</th><th>E</th><th>D</th><th>SG</th></tr></thead><tbody>';
+function makeTable(data,zones){
+  var h='<table class="stbl"><thead><tr><th>#</th><th>Time</th><th>P</th><th>J</th><th>V</th><th>E</th><th>D</th><th>SG</th></tr></thead><tbody>';
   for(var i=0;i<data.length;i++){
-    var r = data[i];
-    var bl = "";
+    var r=data[i];
+    var bl="";
     if(zones){
       if(r.p<=4) bl="border-left:3px solid #1b5e20";
       else if(r.p<=6) bl="border-left:3px solid #4caf50";
@@ -287,45 +332,43 @@ function makeTable(data, zones){
       if(r.p<=2) bl="border-left:3px solid #1b5e20";
       else if(r.p===3) bl="border-left:3px solid #ff9800";
     }
-    var sgc = r.sg>0?"color:#1a5c2e":r.sg<0?"color:#c62828":"";
-    h += '<tr class="'+(r.flu?"flu":"")+'" style="'+bl+'">';
-    h += '<td style="font-weight:600">'+r.p+'</td>';
-    h += '<td class="'+(r.flu?"flu-n":"tn")+'">'+r.t+(r.flu?" 🟢":"")+'</td>';
-    h += '<td style="font-weight:700">'+r.pts+'</td>';
-    h += '<td>'+r.j+'</td><td>'+r.v+'</td><td>'+r.e+'</td><td>'+r.d+'</td>';
-    h += '<td style="font-weight:500;'+sgc+'">'+(r.sg>0?"+":"")+r.sg+'</td>';
-    h += '</tr>';
+    var sgc=r.sg>0?"color:#4caf50":r.sg<0?"color:#ff6b6b":"";
+    h+='<tr class="'+(r.flu?"flu-r":"")+'" style="'+bl+'">';
+    h+='<td style="font-weight:600;color:#fff">'+r.p+'</td>';
+    h+='<td class="'+(r.flu?"fn":"")+'">'+r.t+(r.flu?" 🟢":"")+'</td>';
+    h+='<td class="pts">'+r.pts+'</td>';
+    h+='<td>'+r.j+'</td><td>'+r.v+'</td><td>'+r.e+'</td><td>'+r.d+'</td>';
+    h+='<td style="font-weight:500;'+sgc+'">'+(r.sg>0?"+":"")+r.sg+'</td>';
+    h+='</tr>';
   }
-  h += '</tbody></table>';
+  h+='</tbody></table>';
   return h;
 }
 
-document.getElementById("libertaTable").innerHTML = makeTable(LIBERTA, false);
-document.getElementById("brTable").innerHTML = makeTable(BRASILEIRAO, true);
+document.getElementById("libertaTable").innerHTML=makeTable(LIBERTA,false);
+document.getElementById("brTable").innerHTML=makeTable(BRASILEIRAO,true);
 
-// === RSS AUTO ===
+// RSS
 function loadRSS(){
-  var R2J = "https://api.rss2json.com/v1/api.json?rss_url=";
-  var feeds = [
+  var R2J="https://api.rss2json.com/v1/api.json?rss_url=";
+  var feeds=[
     {name:"GE / Globo Esporte",color:"#127a3e",rss:"https://news.google.com/rss/search?q=Fluminense+site:ge.globo.com&hl=pt-BR&gl=BR&ceid=BR:pt-419"},
     {name:"Lance!",color:"#c62828",rss:"https://www.lance.com.br/fluminense/feed/"},
     {name:"NETFLU",color:"#1a5c2e",rss:"https://www.netflu.com.br/feed/"}
   ];
-  var container = document.getElementById("rssNews");
-  var allRSS = [];
-  var done = 0;
-
+  var container=document.getElementById("rssNews");
+  var allRSS=[],done=0;
   feeds.forEach(function(feed){
-    fetch(R2J + encodeURIComponent(feed.rss))
+    fetch(R2J+encodeURIComponent(feed.rss))
       .then(function(r){return r.json()})
       .then(function(data){
-        if(data.status === "ok" && data.items){
+        if(data.status==="ok"&&data.items){
           data.items.forEach(function(item){
-            var t = (item.title||"").toLowerCase();
-            var isFlu = feed.name==="NETFLU" || feed.name==="GE / Globo Esporte" || t.indexOf("flumin")>-1 || t.indexOf("tricolor")>-1 || t.indexOf("zubeldi")>-1 || t.indexOf("hulk")>-1;
-            if(isFlu && item.title){
-              var dt = new Date(item.pubDate);
-              var ts = dt.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})+" "+dt.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+            var t=(item.title||"").toLowerCase();
+            var isFlu=feed.name==="NETFLU"||feed.name==="GE / Globo Esporte"||t.indexOf("flumin")>-1||t.indexOf("tricolor")>-1||t.indexOf("zubeldi")>-1||t.indexOf("hulk")>-1;
+            if(isFlu&&item.title){
+              var dt=new Date(item.pubDate);
+              var ts=dt.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})+" "+dt.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
               allRSS.push({title:item.title,url:item.link,time:ts,date:dt,source:feed.name,color:feed.color});
             }
           });
@@ -334,21 +377,21 @@ function loadRSS(){
       .catch(function(){})
       .finally(function(){
         done++;
-        if(done === feeds.length && allRSS.length > 0){
+        if(done===feeds.length&&allRSS.length>0){
           allRSS.sort(function(a,b){return b.date-a.date});
-          var h = '<div style="margin-top:16px;padding-top:12px;border-top:1px solid #e0e0e0"><div class="cnt" style="font-weight:600">📡 Notícias ao vivo via RSS</div>';
-          allRSS.forEach(function(n){
-            h += '<div class="card"><div class="row"><span class="badge" style="background:'+n.color+'">'+n.source+'</span><span class="tm">'+n.time+'</span></div>';
-            h += '<h3><a href="'+n.url+'" target="_blank">'+n.title+'</a></h3></div>';
-          });
-          h += '</div>';
-          container.innerHTML = h;
+          var h='<div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)"><div class="sec"><h2>📡 Ao Vivo — RSS</h2><div class="line"></div></div>';
+          for(var i=0;i<allRSS.length;i++){
+            var n=allRSS[i];
+            h+='<div class="rss-card"><div class="row"><span class="badge" style="background:'+n.color+'">'+n.source+'</span><span class="tm">'+n.time+'</span></div>';
+            h+='<h3><a href="'+n.url+'" target="_blank">'+n.title+'</a></h3></div>';
+          }
+          h+='</div>';
+          container.innerHTML=h;
         }
       });
   });
 }
 
-// === INIT ===
 renderNews();
 renderCal();
 loadRSS();
