@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="FLUNEWS">
-<title>FLUNEWS</title>
+<meta name="apple-mobile-web-app-title" content="FluNews">
+<title>FluNews</title>
 <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Fluminense_fc_logo.svg/200px-Fluminense_fc_logo.svg.png">
 <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Fluminense_fc_logo.svg/200px-Fluminense_fc_logo.svg.png">
 <style>
@@ -128,17 +128,24 @@ a{color:inherit;text-decoration:none}
 <body>
 
 <div class="hd">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Fluminense_fc_logo.svg/200px-Fluminense_fc_logo.svg.png" alt="Fluminense">
-  <div><h1>FLUNEWS</h1><div class="sub" id="dtEl"></div></div>
+  <svg viewBox="0 0 382 442" xmlns="http://www.w3.org/2000/svg" style="width:48px;height:48px;flex-shrink:0;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))">
+    <path d="M191 5L375 65V265C375 370 280 430 191 437C102 430 7 370 7 265V65L191 5Z" fill="#8b1a2e" stroke="#fff" stroke-width="6"/>
+    <rect x="7" y="155" width="368" height="55" fill="#fff"/>
+    <rect x="7" y="155" width="368" height="18" fill="#1a5c2e"/>
+    <rect x="7" y="192" width="368" height="18" fill="#1a5c2e"/>
+    <text x="191" y="115" text-anchor="middle" fill="#fff" font-size="50" font-weight="bold" font-family="serif">F</text>
+    <text x="191" y="310" text-anchor="middle" fill="#fff" font-size="26" font-weight="bold" font-family="serif">F.F.C.</text>
+  </svg>
+  <div><h1>FluNews</h1><div class="sub" id="dtEl"></div></div>
   <div class="live"><div class="p"></div> Ao vivo</div>
 </div>
 
 <div class="ticker"><div class="ticker-in">
-  <span>🟢 HULK É DO FLUMINENSE! Atacante assina até 2027 e vestirá a camisa 7</span>
-  <span>⚽ HOJE: Independiente Rivadavia x Fluminense — 21h30 — Libertadores</span>
+  <span>⚽ RIVADAVIA 1x1 FLUMINENSE — John Kennedy marca aos 45 e salva o Flu na Libertadores!</span>
+  <span>🟢 Flu depende só de si: precisa vencer Bolívar e La Guaira no Maracanã</span>
+  <span>🟢 HULK É DO FLU! Camisa 7, apresentação dia 16/05 no Maracanã</span>
   <span>📊 Brasileirão: Fluminense em 3º com 26 pontos</span>
-  <span>🏆 Libertadores Grupo C: Flu precisa vencer para seguir vivo</span>
-  <span>🔴 Zubeldía pode cair em caso de derrota hoje na Argentina</span>
+  <span>🏟️ PRÓXIMO JOGO: Fluminense x Vitória — Sáb 09/05 às 18h no Maracanã</span>
 </div></div>
 
 <div class="tabs" id="tabBar">
@@ -156,7 +163,7 @@ a{color:inherit;text-decoration:none}
   </div>
   <div class="syn">
     <div class="lb">📋 Síntese do Dia</div>
-    <p>A grande bomba do dia é a oficialização de Hulk como reforço do Fluminense! O atacante de 39 anos assinou até dezembro de 2027 e vestirá a camisa 7 — a apresentação será no Maracanã dia 16/05 contra o São Paulo. Mas o foco imediato é a Libertadores: nesta quarta (06/05) às 21h30, o Tricolor enfrenta o Independiente Rivadavia em Mendoza em jogo de vida ou morte. Zubeldía prepara mudanças na escalação e Lucho Acosta pode reforçar o time. Em caso de derrota, o técnico deve ser demitido, com Felipe Melo cotado como substituto.</p>
+    <p>John Kennedy salvou o Fluminense! O atacante marcou aos 45 do segundo tempo e garantiu o empate em 1 a 1 com o Independiente Rivadavia, em Mendoza, pela 4ª rodada da Libertadores. Com o resultado, o Flu subiu para 2 pontos no Grupo C e segue vivo — precisa vencer o Bolívar por 3+ gols dia 19/05 e bater o La Guaira dia 27/05, ambos no Maracanã. No mercado, Hulk já foi anunciado oficialmente e vestirá a camisa 7, com apresentação dia 16/05. Próximo jogo: sábado (09/05) contra o Vitória, às 18h, no Maracanã, pelo Brasileirão.</p>
   </div>
   <div class="flt">
     <button class="on" onclick="filterCat('Todos',this)">Todos</button>
@@ -172,10 +179,10 @@ a{color:inherit;text-decoration:none}
 <!-- ===== JOGOS ===== -->
 <div class="wrap" id="tab-cal">
   <div class="nxbig">
-    <div class="nxlb">Próximo Jogo — Libertadores</div>
-    <div class="nxvs">Ind. Rivadavia x Fluminense</div>
-    <div class="nxdt">Hoje • 21h30 • Mendoza, Argentina</div>
-    <div class="nxsub">4ª rodada do Grupo C — Flu precisa vencer para seguir vivo</div>
+    <div class="nxlb">Próximo Jogo — Brasileirão</div>
+    <div class="nxvs">Fluminense x Vitória</div>
+    <div class="nxdt">Sáb 09/05 • 18h • Maracanã, Rio de Janeiro</div>
+    <div class="nxsub">15ª rodada do Brasileirão Série A 2026</div>
   </div>
   <div class="lg">
     <span><span class="lb" style="background:#1b5e20"></span> Libertadores</span>
@@ -191,7 +198,7 @@ a{color:inherit;text-decoration:none}
 <div class="wrap" id="tab-table">
   <div class="hi">
     <div class="hc"><div class="hl">Brasileirão</div><div class="hb">3º lugar</div><div class="hs">26 pontos • 14 jogos</div></div>
-    <div class="hc"><div class="hl">Libertadores — Grupo C</div><div class="hb red">4º lugar</div><div class="hs">1 ponto • 3 jogos</div></div>
+    <div class="hc"><div class="hl">Libertadores — Grupo C</div><div class="hb red">4º lugar</div><div class="hs">2 pontos • 4 jogos</div></div>
   </div>
   <div class="tp">
     <h3>🏆 Libertadores 2026 — Grupo C</h3>
@@ -225,7 +232,7 @@ var NEWS=[
 
 var CAL=[
   {d:"03/05",day:"Dom",h:"18:30",home:"Internacional",away:"Fluminense",comp:"Brasileirão",rnd:"14ª rodada",loc:"Beira-Rio, Porto Alegre",done:true,sc:"2 x 0"},
-  {d:"06/05",day:"Qua",h:"21:30",home:"Ind. Rivadavia",away:"Fluminense",comp:"Libertadores",rnd:"4ª rodada",loc:"Malvinas Argentinas, Mendoza",done:false},
+  {d:"06/05",day:"Qua",h:"21:30",home:"Ind. Rivadavia",away:"Fluminense",comp:"Libertadores",rnd:"4ª rodada",loc:"Malvinas Argentinas, Mendoza",done:true,sc:"1 x 1"},
   {d:"09/05",day:"Sáb",h:"18:00",home:"Fluminense",away:"Vitória",comp:"Brasileirão",rnd:"15ª rodada",loc:"Maracanã, Rio de Janeiro",done:false},
   {d:"12/05",day:"Ter",h:"21:30",home:"Fluminense",away:"Operário-PR",comp:"Copa do Brasil",rnd:"Volta",loc:"Maracanã, Rio de Janeiro",done:false},
   {d:"16/05",day:"Sáb",h:"20:30",home:"Fluminense",away:"São Paulo",comp:"Brasileirão",rnd:"16ª rodada",loc:"Maracanã, Rio de Janeiro",done:false},
@@ -236,10 +243,10 @@ var CAL=[
 ];
 
 var LIB=[
-  {p:1,t:"Ind. Rivadavia",pts:9,j:3,v:3,e:0,d:0,sg:5},
+  {p:1,t:"Ind. Rivadavia",pts:10,j:4,v:3,e:1,d:0,sg:5},
   {p:2,t:"Bolívar",pts:4,j:3,v:1,e:1,d:1,sg:1},
   {p:3,t:"Dep. La Guaira",pts:2,j:3,v:0,e:2,d:1,sg:-3},
-  {p:4,t:"Fluminense",pts:1,j:3,v:0,e:1,d:2,sg:-3,flu:true}
+  {p:4,t:"Fluminense",pts:2,j:4,v:0,e:2,d:2,sg:-3,flu:true}
 ];
 
 var BR=[
