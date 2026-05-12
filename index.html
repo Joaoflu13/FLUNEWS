@@ -1,412 +1,456 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="FluNews">
-<title>FluNews</title>
-<link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Fluminense_fc_logo.svg/200px-Fluminense_fc_logo.svg.png">
-<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Fluminense_fc_logo.svg/200px-Fluminense_fc_logo.svg.png">
-<style>
-:root{--g:#1a5c2e;--r:#8b1a2e;--dk:#0f1a0f;--acc:#4caf50}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,-apple-system,sans-serif;background:var(--dk);color:#e0e0e0;min-height:100vh}
-a{color:inherit;text-decoration:none}
+import { useState } from "react";
 
-.hd{background:linear-gradient(135deg,var(--g) 0%,#0d2e18 100%);padding:12px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:20;border-bottom:2px solid rgba(255,255,255,.06)}
-.hd img{width:48px;height:48px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}
-.hd h1{font-size:24px;font-weight:800;letter-spacing:3px;color:#fff}
-.hd .sub{font-size:11px;color:rgba(255,255,255,.5)}
-.hd .live{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--acc)}
-.hd .live .p{width:8px;height:8px;border-radius:50%;background:var(--acc);animation:bl 1.5s infinite}
-@keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
+const G = "#1a5c2e";       // verde Flu
+const R = "#8b1a2e";       // grená Flu
+const SHIELD = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Fluminense_fc_logo.svg/200px-Fluminense_fc_logo.svg.png";
 
-.ticker{background:var(--r);overflow:hidden;white-space:nowrap;font-size:12px;font-weight:600;color:#fff;padding:5px 0}
-.ticker-in{display:inline-block;animation:sc 35s linear infinite}
-@keyframes sc{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
-.ticker-in span{margin:0 50px}
-
-.tabs{display:flex;background:rgba(255,255,255,.03);border-bottom:2px solid rgba(255,255,255,.08);position:sticky;top:72px;z-index:15}
-.tb{flex:1;padding:12px 0;font-size:13px;font-weight:700;border:none;background:none;cursor:pointer;color:rgba(255,255,255,.4);border-bottom:3px solid transparent;transition:.2s;letter-spacing:.5px}
-.tb:hover{color:rgba(255,255,255,.7)}
-.tb.on{color:#fff;border-bottom-color:var(--acc);background:rgba(255,255,255,.03)}
-
-.wrap{padding:16px 20px;max-width:1000px;margin:0 auto;display:none}
-.wrap.show{display:block}
-
-/* SOURCES */
-.src-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.src-bar a{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:500;transition:.2s}
-.src-bar a:hover{background:rgba(255,255,255,.12)}
-.dot{width:7px;height:7px;border-radius:50%;display:inline-block}
-
-/* SYNTHESIS */
-.syn{background:linear-gradient(135deg,var(--r),#4a0e1a);border-radius:14px;padding:16px 18px;margin-bottom:14px;border:1px solid rgba(255,255,255,.06)}
-.syn .lb{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.55);margin-bottom:8px}
-.syn p{font-size:14px;line-height:1.8;color:rgba(255,255,255,.88)}
-
-/* FILTERS */
-.flt{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.flt button{padding:5px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);font-size:11px;font-weight:600;cursor:pointer;color:rgba(255,255,255,.6);transition:.2s}
-.flt button:hover{background:rgba(255,255,255,.1)}
-.flt button.on{background:var(--g);border-color:var(--g);color:#fff}
-
-/* NEWS */
-.nc{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px 14px;margin-bottom:8px;transition:.2s;position:relative}
-.nc:hover{background:rgba(255,255,255,.08);transform:translateY(-1px)}
-.nc.feat{border:1.5px solid var(--r);box-shadow:0 0 20px rgba(139,26,46,.15)}
-.nc .fb{position:absolute;top:-1px;right:14px;background:var(--r);color:#fff;font-size:9px;font-weight:700;padding:2px 10px;border-radius:0 0 8px 8px}
-.rw{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:5px}
-.badge{font-size:10px;padding:2px 9px;border-radius:8px;color:#fff;font-weight:600}
-.tm{font-size:10px;color:rgba(255,255,255,.3)}
-.nc h3{font-size:14px;font-weight:600;line-height:1.4;color:#fff;margin-bottom:3px}
-.nc h3 a:hover{color:var(--acc)}
-.nc .sm{font-size:12px;color:rgba(255,255,255,.45);line-height:1.6}
-.nc .lk{font-size:11px;color:var(--acc);font-weight:600;margin-top:5px;display:inline-block}
-.nc .lk:hover{text-decoration:underline}
-
-/* GAMES */
-.gc{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px 16px;margin-bottom:8px;transition:.2s;position:relative}
-.gc:hover{background:rgba(255,255,255,.08)}
-.gc.nx{border:1.5px solid var(--g);box-shadow:0 0 16px rgba(26,92,46,.15)}
-.gc .nb{position:absolute;top:-1px;right:12px;background:var(--g);color:#fff;font-size:8px;font-weight:700;padding:2px 8px;border-radius:0 0 6px 6px;letter-spacing:.5px}
-.gc .gt{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.gc .gm{display:flex;align-items:center;justify-content:center;gap:10px}
-.gc .tn{flex:1;font-size:14px;color:rgba(255,255,255,.8)}
-.gc .tn.flu{font-weight:700;color:var(--acc)}
-.gc .tn.r{text-align:right}
-.gc .ct{text-align:center;min-width:58px}
-.gc .sc{font-size:18px;font-weight:700;color:#fff}
-.gc .hr{font-size:14px;font-weight:600;color:rgba(255,255,255,.5)}
-.gc .dd{font-size:10px;color:rgba(255,255,255,.3)}
-.gc .loc{font-size:10px;color:rgba(255,255,255,.25);text-align:center;margin-top:4px}
-
-/* NEXT GAME BIG */
-.nxbig{background:linear-gradient(135deg,var(--g),#0d2e18);border-radius:14px;padding:20px;border:1px solid rgba(76,175,80,.15);text-align:center;margin-bottom:16px}
-.nxbig .nxlb{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.45);margin-bottom:6px}
-.nxbig .nxvs{font-size:22px;font-weight:800;color:#fff;margin-bottom:4px}
-.nxbig .nxdt{font-size:15px;color:var(--acc);font-weight:600}
-.nxbig .nxsub{font-size:11px;color:rgba(255,255,255,.35);margin-top:4px}
-
-/* TABLE */
-.tp{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px;overflow-x:auto;margin-bottom:14px}
-.tp h3{font-size:14px;font-weight:700;color:#fff;margin-bottom:10px}
-.st{width:100%;border-collapse:collapse;font-size:11px}
-.st th{padding:6px 4px;text-align:center;color:rgba(255,255,255,.35);font-weight:500;font-size:10px;border-bottom:1px solid rgba(255,255,255,.08)}
-.st th:nth-child(2){text-align:left}
-.st td{padding:6px 4px;text-align:center;border-bottom:1px solid rgba(255,255,255,.03);color:rgba(255,255,255,.65)}
-.st td:nth-child(2){text-align:left}
-.st tr.fl{background:rgba(26,92,46,.1)}
-.st td.fn{font-weight:700;color:var(--acc)}
-.st td.pt{font-weight:700;color:#fff}
-.lg{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
-.lg span{display:flex;align-items:center;gap:4px;font-size:9px;color:rgba(255,255,255,.35)}
-.lg .lb{width:8px;height:3px;border-radius:2px}
-.hi{background:linear-gradient(135deg,var(--g),#0d2e18);border-radius:12px;padding:16px;display:flex;gap:20px;flex-wrap:wrap;margin-bottom:16px;border:1px solid rgba(255,255,255,.06)}
-.hi .hc{flex:1;min-width:130px}
-.hi .hc .hl{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.45);margin-bottom:2px}
-.hi .hc .hb{font-size:28px;font-weight:800;color:#fff}
-.hi .hc .hb.red{color:#ff6b6b}
-.hi .hc .hs{font-size:11px;color:rgba(255,255,255,.55)}
-
-/* RSS */
-#rssBox .rc{background:rgba(76,175,80,.05);border:1px solid rgba(76,175,80,.12);border-radius:10px;padding:10px 12px;margin-bottom:6px;transition:.2s}
-#rssBox .rc:hover{background:rgba(76,175,80,.1)}
-#rssBox h3{font-size:13px;font-weight:600;color:#fff;line-height:1.4}
-#rssBox h3 a:hover{color:var(--acc)}
-
-.sec{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.sec h2{font-size:15px;font-weight:700;color:#fff;white-space:nowrap}
-.sec .ln{flex:1;height:1px;background:rgba(255,255,255,.08)}
-
-.ft{text-align:center;padding:20px;font-size:10px;color:rgba(255,255,255,.15);border-top:1px solid rgba(255,255,255,.04);margin-top:20px}
-.cnt{font-size:11px;color:rgba(255,255,255,.3);margin-bottom:10px}
-</style>
-</head>
-<body>
-
-<div class="hd">
-  <svg viewBox="0 0 382 442" xmlns="http://www.w3.org/2000/svg" style="width:48px;height:48px;flex-shrink:0;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))">
-    <path d="M191 5L375 65V265C375 370 280 430 191 437C102 430 7 370 7 265V65L191 5Z" fill="#8b1a2e" stroke="#fff" stroke-width="6"/>
-    <rect x="7" y="155" width="368" height="55" fill="#fff"/>
-    <rect x="7" y="155" width="368" height="18" fill="#1a5c2e"/>
-    <rect x="7" y="192" width="368" height="18" fill="#1a5c2e"/>
-    <text x="191" y="115" text-anchor="middle" fill="#fff" font-size="50" font-weight="bold" font-family="serif">F</text>
-    <text x="191" y="310" text-anchor="middle" fill="#fff" font-size="26" font-weight="bold" font-family="serif">F.F.C.</text>
-  </svg>
-  <div><h1>FluNews</h1><div class="sub" id="dtEl"></div></div>
-  <div class="live"><div class="p"></div> Ao vivo</div>
-</div>
-
-<div class="ticker"><div class="ticker-in">
-  <span>⚽ RIVADAVIA 1x1 FLUMINENSE — John Kennedy marca aos 45 e salva o Flu na Libertadores!</span>
-  <span>🟢 Flu depende só de si: precisa vencer Bolívar e La Guaira no Maracanã</span>
-  <span>🟢 HULK É DO FLU! Camisa 7, apresentação dia 16/05 no Maracanã</span>
-  <span>📊 Brasileirão: Fluminense em 3º com 26 pontos</span>
-  <span>🏟️ PRÓXIMO JOGO: Fluminense x Vitória — Sáb 09/05 às 18h no Maracanã</span>
-</div></div>
-
-<div class="tabs" id="tabBar">
-  <button class="tb on" data-t="news">📰 Notícias</button>
-  <button class="tb" data-t="cal">📅 Jogos</button>
-  <button class="tb" data-t="table">🏆 Classificação</button>
-</div>
-
-<!-- ===== NOTÍCIAS ===== -->
-<div class="wrap show" id="tab-news">
-  <div class="src-bar">
-    <a href="https://ge.globo.com/futebol/times/fluminense/" target="_blank"><span class="dot" style="background:#127a3e"></span> GE / Globo Esporte ↗</a>
-    <a href="https://www.lance.com.br/fluminense/" target="_blank"><span class="dot" style="background:#c62828"></span> Lance! ↗</a>
-    <a href="https://www.netflu.com.br/" target="_blank"><span class="dot" style="background:#1a5c2e"></span> NETFLU ↗</a>
-  </div>
-  <div class="syn">
-    <div class="lb">📋 Síntese do Dia</div>
-    <p>John Kennedy salvou o Fluminense! O atacante marcou aos 45 do segundo tempo e garantiu o empate em 1 a 1 com o Independiente Rivadavia, em Mendoza, pela 4ª rodada da Libertadores. Com o resultado, o Flu subiu para 2 pontos no Grupo C e segue vivo — precisa vencer o Bolívar por 3+ gols dia 19/05 e bater o La Guaira dia 27/05, ambos no Maracanã. No mercado, Hulk já foi anunciado oficialmente e vestirá a camisa 7, com apresentação dia 16/05. Próximo jogo: sábado (09/05) contra o Vitória, às 18h, no Maracanã, pelo Brasileirão.</p>
-  </div>
-  <div class="flt">
-    <button class="on" onclick="filterCat('Todos',this)">Todos</button>
-    <button onclick="filterCat('Jogos',this)">⚽ Jogos</button>
-    <button onclick="filterCat('Transferências',this)">🔄 Transferências</button>
-    <button onclick="filterCat('Bastidores',this)">🎭 Bastidores</button>
-  </div>
-  <div id="newsBox"></div>
-  <div id="rssBox"></div>
-  <div class="ft">FLUNEWS © 2026 • Notícias via RSS atualizadas automaticamente</div>
-</div>
-
-<!-- ===== JOGOS ===== -->
-<div class="wrap" id="tab-cal">
-  <div class="nxbig">
-    <div class="nxlb">Próximo Jogo — Brasileirão</div>
-    <div class="nxvs">Fluminense x Vitória</div>
-    <div class="nxdt">Sáb 09/05 • 18h • Maracanã, Rio de Janeiro</div>
-    <div class="nxsub">15ª rodada do Brasileirão Série A 2026</div>
-  </div>
-  <div class="lg">
-    <span><span class="lb" style="background:#1b5e20"></span> Libertadores</span>
-    <span><span class="lb" style="background:#f9a825"></span> Brasileirão</span>
-    <span><span class="lb" style="background:#0d47a1"></span> Copa do Brasil</span>
-  </div>
-  <div class="cnt">Maio 2026 — 8 jogos restantes</div>
-  <div id="calBox"></div>
-  <div class="ft">FLUNEWS © 2026 • Calendário de jogos do Fluminense</div>
-</div>
-
-<!-- ===== CLASSIFICAÇÃO ===== -->
-<div class="wrap" id="tab-table">
-  <div class="hi">
-    <div class="hc"><div class="hl">Brasileirão</div><div class="hb">3º lugar</div><div class="hs">26 pontos • 14 jogos</div></div>
-    <div class="hc"><div class="hl">Libertadores — Grupo C</div><div class="hb red">4º lugar</div><div class="hs">2 pontos • 4 jogos</div></div>
-  </div>
-  <div class="tp">
-    <h3>🏆 Libertadores 2026 — Grupo C</h3>
-    <div class="lg"><span><span class="lb" style="background:#1b5e20"></span> Classificado</span><span><span class="lb" style="background:#ff9800"></span> Sul-Americana</span></div>
-    <div id="libBox"></div>
-  </div>
-  <div class="tp">
-    <h3>⚽ Brasileirão 2026 — Após 14ª rodada</h3>
-    <div class="lg"><span><span class="lb" style="background:#1b5e20"></span> Liberta</span><span><span class="lb" style="background:#4caf50"></span> Pré-Lib</span><span><span class="lb" style="background:#ff9800"></span> Sula</span><span><span class="lb" style="background:#c62828"></span> Rebaixamento</span></div>
-    <div id="brBox"></div>
-  </div>
-  <div class="ft">FLUNEWS © 2026 • Classificação atualizada</div>
-</div>
-
-<script>
-// DATA
-var NEWS=[
-  {src:"GE / Globo Esporte",color:"#127a3e",title:"Independiente Rivadavia x Fluminense: tudo sobre o jogo decisivo da Libertadores",sm:"O Tricolor enfrenta o Rivadavia nesta quarta (06/05) às 21h30, em Mendoza. Fluminense precisa vencer para seguir vivo na competição.",url:"https://ge.globo.com/futebol/times/fluminense/",cat:"Jogos",time:"06/05 14:00",feat:true},
-  {src:"GE / Globo Esporte",color:"#127a3e",title:"Globo, ESPN e GE TV definem equipes para cobertura de Rivadavia x Fluminense",sm:"Os canais que transmitirão o jogo decisivo já definiram suas escalas de transmissão ao vivo.",url:"https://ge.globo.com/futebol/times/fluminense/",cat:"Jogos",time:"06/05 12:30",feat:false},
-  {src:"NETFLU",color:"#1a5c2e",title:"Previsão do tempo para Rivadavia x Flu: clima favorável em Mendoza",sm:"Tempo será favorável ao futebol nesta quarta. Confira a temperatura para o horário do jogo.",url:"https://www.netflu.com.br/noticias/",cat:"Jogos",time:"06/05 11:00",feat:false},
-  {src:"GE / Globo Esporte",color:"#127a3e",title:"BOMBA: Fluminense anuncia contratação do atacante Hulk até 2027",sm:"Atacante de 39 anos assinou até dezembro de 2027. Chega sem custos e vestirá a camisa 7. Apresentação dia 16/05 no Maracanã.",url:"https://ge.globo.com/futebol/times/fluminense/",cat:"Transferências",time:"05/05 23:30",feat:false},
-  {src:"Lance!",color:"#c62828",title:"Hulk é do Fluminense! Atacante assina até 2027 e será apresentado contra o São Paulo",sm:"Primeiro contato com a torcida será no dia 16 de maio, no Maracanã. Hulk marcou 140 gols pelo Atlético-MG.",url:"https://www.lance.com.br/fluminense/",cat:"Transferências",time:"05/05 23:00",feat:false},
-  {src:"NETFLU",color:"#1a5c2e",title:"Fábio manda recado para Hulk sobre o Fluminense",sm:"Goleiro tricolor gravou mensagem: 'Será muito bem recebido'.",url:"https://www.netflu.com.br/noticias/",cat:"Transferências",time:"05/05 20:00",feat:false},
-  {src:"NETFLU",color:"#1a5c2e",title:"Fluminense define minutos de Lucho Acosta contra o Rivadavia",sm:"Comissão técnica estipula tempo de atuação do meia argentino recuperado de lesão.",url:"https://www.netflu.com.br/noticias/",cat:"Jogos",time:"05/05 18:30",feat:false},
-  {src:"NETFLU",color:"#1a5c2e",title:"Zubeldía fará várias mudanças no Flu para o Rivadavia; veja escalação",sm:"Técnico prepara alterações no time titular para o confronto decisivo pela Libertadores.",url:"https://www.netflu.com.br/noticias/",cat:"Jogos",time:"05/05 17:00",feat:false},
-  {src:"Lance!",color:"#c62828",title:"Flu abre venda de ingressos para Vitória, Operário e São Paulo",sm:"Torcedores já podem garantir entrada para as próximas três partidas no Maracanã.",url:"https://www.lance.com.br/fluminense/",cat:"Bastidores",time:"05/05 15:00",feat:false},
-  {src:"NETFLU",color:"#1a5c2e",title:"Zubeldía deve ser demitido em caso de derrota, afirma repórter",sm:"ESPN: diretoria trabalha com possibilidade de saída do técnico caso Flu perca hoje.",url:"https://www.netflu.com.br/noticias/",cat:"Bastidores",time:"05/05 14:20",feat:false},
-  {src:"NETFLU",color:"#1a5c2e",title:"Felipe Melo ganha força para substituir Zubeldía",sm:"Conselheiros indicam o ex-volante como opção caso haja eliminação na Libertadores.",url:"https://www.netflu.com.br/noticias/",cat:"Bastidores",time:"05/05 13:00",feat:false},
-  {src:"GE / Globo Esporte",color:"#127a3e",title:"Fluminense perde para o Internacional por 2 a 0 pelo Brasileirão",sm:"Derrota no Beira-Rio pela 14ª rodada. Falhas defensivas aumentam pressão sobre Zubeldía.",url:"https://ge.globo.com/futebol/times/fluminense/",cat:"Jogos",time:"03/05 20:30",feat:false}
+const SOURCES = [
+  { name: "GE / Globo",   color: "#127a3e" },
+  { name: "Lance!",       color: "#e30613" },
+  { name: "NETFLU",       color: "#0a6b32" },
+  { name: "CNN Brasil",   color: "#cc0000" },
+  { name: "Fluminense FC",color: G },
+  { name: "Explosão Tri", color: "#7a1a2a" },
 ];
 
-var CAL=[
-  {d:"03/05",day:"Dom",h:"18:30",home:"Internacional",away:"Fluminense",comp:"Brasileirão",rnd:"14ª rodada",loc:"Beira-Rio, Porto Alegre",done:true,sc:"2 x 0"},
-  {d:"06/05",day:"Qua",h:"21:30",home:"Ind. Rivadavia",away:"Fluminense",comp:"Libertadores",rnd:"4ª rodada",loc:"Malvinas Argentinas, Mendoza",done:true,sc:"1 x 1"},
-  {d:"09/05",day:"Sáb",h:"18:00",home:"Fluminense",away:"Vitória",comp:"Brasileirão",rnd:"15ª rodada",loc:"Maracanã, Rio de Janeiro",done:false},
-  {d:"12/05",day:"Ter",h:"21:30",home:"Fluminense",away:"Operário-PR",comp:"Copa do Brasil",rnd:"Volta",loc:"Maracanã, Rio de Janeiro",done:false},
-  {d:"16/05",day:"Sáb",h:"20:30",home:"Fluminense",away:"São Paulo",comp:"Brasileirão",rnd:"16ª rodada",loc:"Maracanã, Rio de Janeiro",done:false},
-  {d:"19/05",day:"Ter",h:"21:30",home:"Fluminense",away:"Bolívar",comp:"Libertadores",rnd:"5ª rodada",loc:"Maracanã, Rio de Janeiro",done:false},
-  {d:"23/05",day:"Sáb",h:"19:00",home:"Mirassol",away:"Fluminense",comp:"Brasileirão",rnd:"17ª rodada",loc:"Campos Maia, Mirassol",done:false},
-  {d:"27/05",day:"Qua",h:"21:30",home:"Fluminense",away:"Dep. La Guaira",comp:"Libertadores",rnd:"6ª rodada",loc:"Maracanã, Rio de Janeiro",done:false},
-  {d:"31/05",day:"Dom",h:"A def.",home:"Cruzeiro",away:"Fluminense",comp:"Brasileirão",rnd:"18ª rodada",loc:"Mineirão, Belo Horizonte",done:false}
+const sourceColor = (n) => (SOURCES.find(s => n.includes(s.name.split(" ")[0])) || {}).color || "#666";
+
+const COMP_COLORS = {
+  "Libertadores": "#1a5c2e",
+  "Brasileirão":  "#0066b3",
+  "Copa do Brasil": "#f5a623",
+  "Carioca": R,
+};
+
+// ───────── NOTÍCIAS (mais recentes primeiro) ─────────
+const NEWS = [
+  {
+    title: "Fluminense x Operário-PR: hoje, 21h30, no Maracanã pela vaga nas oitavas",
+    summary: "Após empate sem gols na ida em Ponta Grossa, Tricolor decide vaga na Copa do Brasil em casa. Vitória simples classifica; empate leva aos pênaltis. Jogo no Prime Video. Martinelli é desfalque; Jemmes volta de suspensão.",
+    source: "Fluminense FC",
+    category: "Copa do Brasil",
+    time: "12/05 09:00",
+    featured: true,
+    hot: true,
+  },
+  {
+    title: "Previsão do tempo: prepara o casaco! Frio no Maracanã hoje",
+    summary: "Noite de terça com temperaturas em queda no Rio e sensação térmica baixa para o jogo da Copa do Brasil. Vento moderado e céu parcialmente nublado.",
+    source: "Explosão Tri",
+    category: "Jogo de hoje",
+    time: "12/05 07:30",
+  },
+  {
+    title: "Hulk desembarca no Rio: 'meu sonho é a Libertadores'",
+    summary: "O reforço de peso chegou ao Rio na segunda. Anunciado em 05/05 com contrato até dez/2027 e camisa 7, Hulk se apresenta ao torcedor no sábado, antes do jogo contra o São Paulo. Estreia oficial deve ser apenas após a Copa do Mundo.",
+    source: "Explosão Tri",
+    category: "Reforço",
+    time: "11/05 20:00",
+    featured: true,
+  },
+  {
+    title: "Fluminense x São Paulo de sábado terá horário alterado no Maracanã",
+    summary: "A CBF mudou o horário do jogo pela 16ª rodada do Brasileirão. Confronto será mais cedo para evitar choque com outro evento na cidade.",
+    source: "Explosão Tri",
+    category: "Brasileirão",
+    time: "11/05 18:30",
+  },
+  {
+    title: "Pré-lista da Seleção para a Copa do Mundo deve ter um nome do Flu",
+    summary: "Apuração indica que ao menos um jogador do Tricolor estará na lista preliminar de Dorival para o Mundial 2026 (Canadá/EUA/México), que começa em 11 de junho.",
+    source: "Explosão Tri",
+    category: "Seleção",
+    time: "11/05 15:36",
+  },
+  {
+    title: "Provável escalação: Zubeldía deve fazer muitas mudanças contra o Operário",
+    summary: "Pressionado após sequência sem vitórias, técnico argentino estuda alterações no time titular. Volta de Jemmes na zaga é certa; ataque deve ter John Kennedy e Soteldo.",
+    source: "Lance!",
+    category: "Copa do Brasil",
+    time: "11/05 13:15",
+  },
+  {
+    title: "Agenda do mês: veja todos os compromissos do Flu em maio",
+    summary: "Após Operário (12/05), o Tricolor enfrenta São Paulo (16/05) pelo Brasileirão, recebe o Bolívar (19-21/05) pela Libertadores e fecha o grupo contra o Dep. La Guaira (26-28/05). Sequência decisiva no Maracanã.",
+    source: "Explosão Tri",
+    category: "Agenda",
+    time: "11/05 11:00",
+  },
+  {
+    title: "Hulk se despede oficialmente do Atlético-MG antes de viajar ao Rio",
+    summary: "Em cerimônia no CT do Galo, o ídolo agradeceu torcida e diretoria após 140 gols pelo clube. Embarcou para o Rio na noite de domingo.",
+    source: "Lance!",
+    category: "Reforço",
+    time: "10/05 20:30",
+  },
+  {
+    title: "Fluminense 2x2 Vitória: torcida protesta contra Zubeldía no Maracanã",
+    summary: "Tricolor saiu na frente com John Kennedy (1ºT), viu o Vitória virar com Renato Kayzer (pênalti) e Renê, e só empatou aos 45'/2T com Serna após assistência de Kennedy. Torcida gritou 'burro' para o técnico. Flu permanece em 3º com 27 pts e completa 4 jogos sem vencer.",
+    source: "Lance!",
+    category: "Brasileirão",
+    time: "09/05 20:55",
+    featured: true,
+  },
+  {
+    title: "Brasileiro Feminino: Santos supera o Fluminense por 1x0",
+    summary: "Tricolor feminino perde em casa pelo Brasileirão A1 e fica em situação delicada na competição.",
+    source: "Fluminense FC",
+    category: "Feminino",
+    time: "09/05 17:00",
+  },
+  {
+    title: "Sub-15 do Flu vence o Cuiabá e avança invicto na Copa do Brasil",
+    summary: "Categoria de base segue impecável na competição nacional, com gols dos talentos de Xerém.",
+    source: "Fluminense FC",
+    category: "Base",
+    time: "09/05 15:20",
+  },
+  {
+    title: "Flu reduz preço de ingressos para mobilizar torcida na Libertadores",
+    summary: "Clube lança nova campanha de bilheteria para os jogos decisivos do Grupo C no Maracanã contra Bolívar (5ª rod.) e Dep. La Guaira (6ª rod.). Sócios têm prioridade.",
+    source: "Fluminense FC",
+    category: "Libertadores",
+    time: "09/05 11:00",
+  },
 ];
 
-var LIB=[
-  {p:1,t:"Ind. Rivadavia",pts:10,j:4,v:3,e:1,d:0,sg:5},
-  {p:2,t:"Bolívar",pts:4,j:3,v:1,e:1,d:1,sg:1},
-  {p:3,t:"Dep. La Guaira",pts:2,j:3,v:0,e:2,d:1,sg:-3},
-  {p:4,t:"Fluminense",pts:2,j:4,v:0,e:2,d:2,sg:-3,flu:true}
+// ───────── CALENDÁRIO ─────────
+const CALENDAR = [
+  // Realizados (mais recentes)
+  { date: "09/05", weekday: "SÁB", time: "18:00", home: "Fluminense", away: "Vitória", venue: "Maracanã", comp: "Brasileirão", round: "15ª rodada", done: true, score: "2-2", scorers: "John Kennedy, Serna" },
+  { date: "06/05", weekday: "TER", time: "21:30", home: "Ind. Rivadavia", away: "Fluminense", venue: "Bautista Gargantini (ARG)", comp: "Libertadores", round: "4ª rodada", done: true, score: "1-1", scorers: "Acosta" },
+  { date: "03/05", weekday: "DOM", time: "16:00", home: "Internacional", away: "Fluminense", venue: "Beira-Rio", comp: "Brasileirão", round: "14ª rodada", done: true, score: "2-0", scorers: "—" },
+  // Próximos
+  { date: "12/05", weekday: "TER", time: "21:30", home: "Fluminense", away: "Operário-PR", venue: "Maracanã", comp: "Copa do Brasil", round: "5ª fase — Volta (ida 0x0)", next: true, broadcast: "Prime Video" },
+  { date: "16/05", weekday: "SÁB", time: "20:30", home: "Fluminense", away: "São Paulo", venue: "Maracanã", comp: "Brasileirão", round: "16ª rodada", broadcast: "Globo / Premiere", note: "Apresentação do Hulk" },
+  { date: "20/05", weekday: "QUA", time: "21:30", home: "Fluminense", away: "Bolívar", venue: "Maracanã", comp: "Libertadores", round: "5ª rodada — Grupo C", broadcast: "Paramount+" },
+  { date: "27/05", weekday: "QUA", time: "21:30", home: "Fluminense", away: "Dep. La Guaira", venue: "Maracanã", comp: "Libertadores", round: "6ª rodada — Grupo C (decisiva)", broadcast: "Paramount+" },
 ];
 
-var BR=[
-  {p:1,t:"Palmeiras",pts:33,j:14,v:10,e:3,d:1,sg:19},
-  {p:2,t:"Flamengo",pts:27,j:14,v:8,e:3,d:3,sg:10},
-  {p:3,t:"Fluminense",pts:26,j:14,v:8,e:2,d:4,sg:8,flu:true},
-  {p:4,t:"São Paulo",pts:24,j:14,v:7,e:3,d:4,sg:7},
-  {p:5,t:"Bahia",pts:24,j:14,v:7,e:3,d:4,sg:5},
-  {p:6,t:"Atlético-MG",pts:24,j:14,v:7,e:3,d:4,sg:4},
-  {p:7,t:"Grêmio",pts:23,j:14,v:7,e:2,d:5,sg:3},
-  {p:8,t:"Vitória",pts:22,j:14,v:6,e:4,d:4,sg:5},
-  {p:9,t:"R.B. Bragantino",pts:21,j:14,v:6,e:3,d:5,sg:2},
-  {p:10,t:"Vasco",pts:20,j:14,v:5,e:5,d:4,sg:1},
-  {p:11,t:"Remo",pts:19,j:14,v:5,e:4,d:5,sg:0},
-  {p:12,t:"Internacional",pts:19,j:14,v:5,e:4,d:5,sg:-1},
-  {p:13,t:"Botafogo",pts:18,j:14,v:5,e:3,d:6,sg:-2},
-  {p:14,t:"Cruzeiro",pts:17,j:14,v:5,e:2,d:7,sg:-3},
-  {p:15,t:"Athletico-PR",pts:16,j:14,v:4,e:4,d:6,sg:-3},
-  {p:16,t:"Santos",pts:15,j:14,v:4,e:3,d:7,sg:-4},
-  {p:17,t:"Corinthians",pts:15,j:14,v:4,e:3,d:7,sg:-9},
-  {p:18,t:"Mirassol",pts:12,j:13,v:3,e:3,d:7,sg:-8},
-  {p:19,t:"Chapecoense",pts:11,j:14,v:3,e:2,d:9,sg:-14},
-  {p:20,t:"Coritiba",pts:9,j:14,v:2,e:3,d:9,sg:-19}
+// ───────── CLASSIFICAÇÃO BRASILEIRÃO (após 15ª rodada) ─────────
+const BR_TABLE = [
+  { pos: 1,  team: "Palmeiras",       p: 34, j: 15, v: 10, e: 4, d: 1, sg: 18, zone: "lib" },
+  { pos: 2,  team: "Flamengo",        p: 30, j: 14, v: 9,  e: 3, d: 2, sg: 15, zone: "lib" },
+  { pos: 3,  team: "Fluminense",      p: 27, j: 15, v: 8,  e: 3, d: 4, sg: 9,  zone: "lib", flu: true },
+  { pos: 4,  team: "São Paulo",       p: 24, j: 15, v: 7,  e: 3, d: 5, sg: 5,  zone: "lib" },
+  { pos: 5,  team: "Cruzeiro",        p: 23, j: 15, v: 6,  e: 5, d: 4, sg: 4,  zone: "lib" },
+  { pos: 6,  team: "Botafogo",        p: 22, j: 15, v: 6,  e: 4, d: 5, sg: 3,  zone: "preLib" },
+  { pos: 7,  team: "RB Bragantino",   p: 20, j: 15, v: 5,  e: 5, d: 5, sg: 1,  zone: "sul" },
+  { pos: 8,  team: "Corinthians",     p: 20, j: 15, v: 6,  e: 2, d: 7, sg: 0,  zone: "sul" },
+  { pos: 9,  team: "Atlético-MG",     p: 19, j: 15, v: 5,  e: 4, d: 6, sg: -1, zone: "sul" },
+  { pos: 10, team: "Vasco",           p: 19, j: 15, v: 5,  e: 4, d: 6, sg: -1, zone: "sul" },
+  { pos: 11, team: "Vitória",         p: 19, j: 15, v: 4,  e: 7, d: 4, sg: -2, zone: "sul" },
+  { pos: 12, team: "Bahia",           p: 19, j: 15, v: 5,  e: 4, d: 6, sg: -2, zone: "sul" },
+  { pos: 13, team: "Athletico-PR",    p: 18, j: 15, v: 4,  e: 6, d: 5, sg: -2, zone: "mid" },
+  { pos: 14, team: "Coritiba",        p: 18, j: 15, v: 4,  e: 6, d: 5, sg: -3, zone: "mid" },
+  { pos: 15, team: "Santos",          p: 18, j: 15, v: 5,  e: 3, d: 7, sg: -3, zone: "mid" },
+  { pos: 16, team: "Internacional",   p: 18, j: 15, v: 4,  e: 6, d: 5, sg: -4, zone: "mid" },
+  { pos: 17, team: "Grêmio",          p: 17, j: 15, v: 4,  e: 5, d: 6, sg: -5, zone: "reb" },
+  { pos: 18, team: "Mirassol",        p: 13, j: 14, v: 3,  e: 4, d: 7, sg: -8, zone: "reb" },
+  { pos: 19, team: "Remo",            p: 12, j: 15, v: 2,  e: 6, d: 7, sg: -9, zone: "reb" },
+  { pos: 20, team: "Chapecoense",     p: 9,  j: 14, v: 2,  e: 3, d: 9, sg: -10, zone: "reb" },
 ];
 
-var cc={"Libertadores":"#1b5e20","Brasileirão":"#f9a825","Copa do Brasil":"#0d47a1"};
-var curCat="Todos";
+const ZONE_COLOR = {
+  lib:    "#1a5c2e",
+  preLib: "#4caf50",
+  sul:    "#f5a623",
+  mid:    "transparent",
+  reb:    "#c62828",
+};
 
-document.getElementById("dtEl").textContent=new Date().toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+// ───────── GRUPO C LIBERTADORES (após 4ª rodada) ─────────
+const LIB_GROUP = [
+  { pos: 1, team: "Ind. Rivadavia (ARG)", p: 9, j: 4, v: 3, e: 0, d: 1, sg: 5 },
+  { pos: 2, team: "Bolívar (BOL)",        p: 7, j: 4, v: 2, e: 1, d: 1, sg: 1 },
+  { pos: 3, team: "Dep. La Guaira (VEN)", p: 2, j: 4, v: 0, e: 2, d: 2, sg: -3 },
+  { pos: 4, team: "Fluminense",           p: 2, j: 4, v: 0, e: 2, d: 2, sg: -3, flu: true },
+];
 
-// TABS
-document.getElementById("tabBar").addEventListener("click",function(e){
-  var b=e.target.closest(".tb");
-  if(!b) return;
-  document.querySelectorAll(".tb").forEach(function(x){x.classList.remove("on")});
-  b.classList.add("on");
-  document.querySelectorAll(".wrap").forEach(function(w){w.classList.remove("show")});
-  document.getElementById("tab-"+b.dataset.t).classList.add("show");
-});
+// ═════════════════ COMPONENTES ═════════════════
 
-// FILTER
-function filterCat(c,btn){
-  curCat=c;
-  document.querySelectorAll(".flt button").forEach(function(b){b.classList.remove("on")});
-  btn.classList.add("on");
-  renderN();
+function Header() {
+  return (
+    <div style={{ background: `linear-gradient(135deg, ${G} 55%, #0f3d1e)`, padding: "14px 16px", display: "flex", alignItems: "center", gap: 12, position: "sticky", top: 0, zIndex: 10 }}>
+      <img src={SHIELD} alt="Fluminense" style={{ width: 44, height: 44, objectFit: "contain", flexShrink: 0 }} />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ color: "#fff", fontWeight: 800, fontSize: 22, letterSpacing: 1, lineHeight: 1 }}>FLUNEWS</div>
+        <div style={{ color: "rgba(255,255,255,0.75)", fontSize: 11, marginTop: 3 }}>Terça, 12 de maio de 2026</div>
+      </div>
+      <div style={{ background: "rgba(255,255,255,0.15)", color: "#fff", padding: "4px 8px", borderRadius: 6, fontSize: 10, fontWeight: 700 }}>AO VIVO</div>
+    </div>
+  );
 }
 
-// NEWS
-function renderN(){
-  var items=curCat==="Todos"?NEWS:NEWS.filter(function(n){return n.cat===curCat});
-  var h="";
-  for(var i=0;i<items.length;i++){
-    var n=items[i];
-    var catC=n.cat==="Jogos"?"#1565c0":n.cat==="Transferências"?"#6a1b9a":"#e65100";
-    h+='<div class="nc'+(n.feat?" feat":"")+'">';
-    if(n.feat) h+='<div class="fb">EM DESTAQUE</div>';
-    h+='<div class="rw"><span class="badge" style="background:'+n.color+'">'+n.src+'</span>';
-    h+='<span class="badge" style="background:'+catC+'">'+n.cat+'</span>';
-    h+='<span class="tm">'+n.time+'</span></div>';
-    h+='<h3><a href="'+n.url+'" target="_blank">'+n.title+'</a></h3>';
-    h+='<div class="sm">'+n.sm+'</div>';
-    h+='<a class="lk" href="'+n.url+'" target="_blank">Ler matéria ↗</a></div>';
-  }
-  document.getElementById("newsBox").innerHTML=h;
+function Tabs({ tab, setTab }) {
+  const tabs = ["Notícias", "Calendário", "Classificação"];
+  return (
+    <div style={{ display: "flex", background: "var(--color-bg-100, #fff)", borderBottom: "0.5px solid var(--color-border-tertiary, #ddd)", position: "sticky", top: 76, zIndex: 9 }}>
+      {tabs.map((t) => (
+        <button key={t} onClick={() => setTab(t)} style={{ flex: 1, padding: "12px 4px", background: "none", border: "none", borderBottom: tab === t ? `2.5px solid ${G}` : "2.5px solid transparent", color: tab === t ? G : "var(--color-text-secondary, #777)", fontWeight: tab === t ? 700 : 500, fontSize: 13, cursor: "pointer" }}>
+          {t}
+        </button>
+      ))}
+    </div>
+  );
 }
 
-// CALENDAR
-function renderC(){
-  var h="",fn=false;
-  for(var i=0;i<CAL.length;i++){
-    var g=CAL[i],nx=!g.done&&!fn;
-    if(nx) fn=true;
-    var c=cc[g.comp]||"#1a5c2e",tc=c==="#f9a825"?"#333":"#fff";
-    h+='<div class="gc'+(nx?" nx":"")+'">';
-    if(nx) h+='<div class="nb">PRÓXIMO JOGO</div>';
-    h+='<div class="gt"><span class="badge" style="background:'+c+';color:'+tc+'">'+g.comp+'</span><span class="tm">'+g.rnd+'</span></div>';
-    h+='<div class="gm">';
-    h+='<div class="tn r'+(g.home==="Fluminense"?" flu":"")+'">'+g.home+'</div>';
-    h+='<div class="ct">';
-    if(g.done) h+='<div class="sc">'+g.sc+'</div>';
-    else h+='<div class="hr">'+g.h+'</div>';
-    h+='<div class="dd">'+g.day+', '+g.d+'</div></div>';
-    h+='<div class="tn'+(g.away==="Fluminense"?" flu":"")+'">'+g.away+'</div></div>';
-    h+='<div class="loc">📍 '+g.loc+'</div></div>';
-  }
-  document.getElementById("calBox").innerHTML=h;
+function MatchBanner() {
+  return (
+    <div style={{ background: `linear-gradient(135deg, ${G}, ${R})`, color: "#fff", padding: "14px 16px", borderRadius: 12, margin: "14px 0" }}>
+      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.5, opacity: 0.85, marginBottom: 6 }}>🏆 HOJE • COPA DO BRASIL</div>
+      <div style={{ fontSize: 18, fontWeight: 800, lineHeight: 1.2 }}>Fluminense x Operário-PR</div>
+      <div style={{ fontSize: 12, opacity: 0.9, marginTop: 4 }}>21h30 • Maracanã • Prime Video</div>
+      <div style={{ fontSize: 11, opacity: 0.85, marginTop: 6, paddingTop: 6, borderTop: "1px solid rgba(255,255,255,0.2)" }}>Jogo da volta da 5ª fase — vale a vaga nas oitavas. Ida 0x0.</div>
+    </div>
+  );
 }
 
-// TABLE
-function mkT(data,zones){
-  var h='<table class="st"><thead><tr><th>#</th><th>Time</th><th>P</th><th>J</th><th>V</th><th>E</th><th>D</th><th>SG</th></tr></thead><tbody>';
-  for(var i=0;i<data.length;i++){
-    var r=data[i],bl="";
-    if(zones){
-      if(r.p<=4) bl="border-left:3px solid #1b5e20";
-      else if(r.p<=6) bl="border-left:3px solid #4caf50";
-      else if(r.p<=12) bl="border-left:3px solid #ff9800";
-      else if(r.p>=17) bl="border-left:3px solid #c62828";
-    } else {
-      if(r.p<=2) bl="border-left:3px solid #1b5e20";
-      else if(r.p===3) bl="border-left:3px solid #ff9800";
-    }
-    var sg=r.sg>0?"color:#4caf50":r.sg<0?"color:#ff6b6b":"";
-    h+='<tr class="'+(r.flu?"fl":"")+'" style="'+bl+'">';
-    h+='<td style="font-weight:600;color:#fff">'+r.p+'</td>';
-    h+='<td class="'+(r.flu?"fn":"")+'">'+r.t+(r.flu?" 🟢":"")+'</td>';
-    h+='<td class="pt">'+r.pts+'</td>';
-    h+='<td>'+r.j+'</td><td>'+r.v+'</td><td>'+r.e+'</td><td>'+r.d+'</td>';
-    h+='<td style="font-weight:500;'+sg+'">'+(r.sg>0?"+":"")+r.sg+'</td></tr>';
-  }
-  return h+'</tbody></table>';
+function NewsCard({ item, saved, onSave }) {
+  return (
+    <div style={{ background: "var(--color-bg-100, #fff)", borderRadius: 10, padding: 12, border: `0.5px solid var(--color-border-tertiary, #e5e5e5)`, borderLeft: item.featured ? `3px solid ${G}` : "0.5px solid var(--color-border-tertiary, #e5e5e5)" }}>
+      <div style={{ display: "flex", gap: 6, alignItems: "center", marginBottom: 6, flexWrap: "wrap" }}>
+        <span style={{ background: sourceColor(item.source), color: "#fff", fontSize: 10, fontWeight: 700, padding: "2px 6px", borderRadius: 4 }}>{item.source}</span>
+        <span style={{ fontSize: 10, color: "var(--color-text-secondary, #777)", border: "0.5px solid var(--color-border-tertiary, #ddd)", padding: "2px 5px", borderRadius: 4 }}>{item.category}</span>
+        {item.hot && <span style={{ background: R, color: "#fff", fontSize: 10, fontWeight: 700, padding: "2px 6px", borderRadius: 4 }}>🔥 HOJE</span>}
+        <span style={{ fontSize: 10, color: "var(--color-text-secondary, #999)", marginLeft: "auto" }}>{item.time}</span>
+      </div>
+      <div style={{ fontWeight: 700, fontSize: 14, color: "var(--color-text-primary, #222)", lineHeight: 1.3, marginBottom: 5 }}>{item.title}</div>
+      <div style={{ fontSize: 12, color: "var(--color-text-secondary, #555)", lineHeight: 1.45 }}>{item.summary}</div>
+      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8 }}>
+        <button onClick={() => onSave(item)} style={{ background: "none", border: "none", fontSize: 18, cursor: "pointer", padding: 0 }} title={saved ? "Remover dos salvos" : "Salvar"}>{saved ? "🏷️" : "🔖"}</button>
+      </div>
+    </div>
+  );
 }
 
-document.getElementById("libBox").innerHTML=mkT(LIB,false);
-document.getElementById("brBox").innerHTML=mkT(BR,true);
-
-// RSS
-function loadRSS(){
-  var R="https://api.rss2json.com/v1/api.json?rss_url=";
-  var feeds=[
-    {name:"GE / Globo Esporte",color:"#127a3e",rss:"https://news.google.com/rss/search?q=Fluminense+site:ge.globo.com&hl=pt-BR&gl=BR&ceid=BR:pt-419"},
-    {name:"Lance!",color:"#c62828",rss:"https://www.lance.com.br/fluminense/feed/"},
-    {name:"NETFLU",color:"#1a5c2e",rss:"https://www.netflu.com.br/feed/"}
-  ];
-  var box=document.getElementById("rssBox"),all=[],dn=0;
-  feeds.forEach(function(f){
-    fetch(R+encodeURIComponent(f.rss))
-      .then(function(r){return r.json()})
-      .then(function(d){
-        if(d.status==="ok"&&d.items){
-          d.items.forEach(function(it){
-            var t=(it.title||"").toLowerCase();
-            var ok=f.name==="NETFLU"||f.name==="GE / Globo Esporte"||t.indexOf("flumin")>-1||t.indexOf("tricolor")>-1||t.indexOf("hulk")>-1;
-            if(ok&&it.title){
-              var dt=new Date(it.pubDate);
-              var ts=dt.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})+" "+dt.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-              all.push({title:it.title,url:it.link,time:ts,date:dt,source:f.name,color:f.color});
-            }
-          });
-        }
-      }).catch(function(){}).finally(function(){
-        dn++;
-        if(dn===feeds.length&&all.length>0){
-          all.sort(function(a,b){return b.date-a.date});
-          var h='<div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.06)"><div class="sec"><h2>📡 Ao Vivo — RSS</h2><div class="ln"></div></div>';
-          for(var i=0;i<all.length;i++){
-            var n=all[i];
-            h+='<div class="rc"><div class="rw"><span class="badge" style="background:'+n.color+'">'+n.source+'</span><span class="tm">'+n.time+'</span></div>';
-            h+='<h3><a href="'+n.url+'" target="_blank">'+n.title+'</a></h3></div>';
-          }
-          box.innerHTML=h+'</div>';
-        }
-      });
-  });
+function GameCard({ g }) {
+  const color = COMP_COLORS[g.comp] || "#666";
+  return (
+    <div style={{ background: "var(--color-bg-100, #fff)", borderRadius: 10, padding: 12, border: `0.5px solid var(--color-border-tertiary, #e5e5e5)`, borderLeft: `4px solid ${color}`, opacity: g.done ? 0.75 : 1, position: "relative" }}>
+      {g.next && <div style={{ position: "absolute", top: -8, right: 10, background: R, color: "#fff", fontSize: 9, fontWeight: 800, padding: "3px 8px", borderRadius: 4, letterSpacing: 0.5 }}>PRÓXIMO JOGO</div>}
+      <div style={{ display: "flex", gap: 6, alignItems: "center", marginBottom: 8 }}>
+        <span style={{ background: color, color: "#fff", fontSize: 10, fontWeight: 700, padding: "2px 7px", borderRadius: 4 }}>{g.comp}</span>
+        <span style={{ fontSize: 10, color: "var(--color-text-secondary, #777)" }}>{g.round}</span>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{ background: "var(--color-bg-200, #f5f5f5)", padding: "6px 8px", borderRadius: 6, textAlign: "center", minWidth: 50 }}>
+          <div style={{ fontSize: 9, fontWeight: 700, color: "var(--color-text-secondary, #777)" }}>{g.weekday}</div>
+          <div style={{ fontSize: 14, fontWeight: 800, color: "var(--color-text-primary, #222)" }}>{g.date}</div>
+          <div style={{ fontSize: 10, color: "var(--color-text-secondary, #777)" }}>{g.time}</div>
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text-primary, #222)" }}>
+            {g.home} {g.done && <span style={{ color: G }}>{g.score?.split("-")[0]}</span>}
+            <span style={{ color: "var(--color-text-secondary, #999)", margin: "0 5px", fontWeight: 400 }}>x</span>
+            {g.done && <span style={{ color: G }}>{g.score?.split("-")[1]} </span>}{g.away}
+          </div>
+          <div style={{ fontSize: 11, color: "var(--color-text-secondary, #777)", marginTop: 3 }}>📍 {g.venue}</div>
+          {g.broadcast && <div style={{ fontSize: 11, color: "var(--color-text-secondary, #777)", marginTop: 2 }}>📺 {g.broadcast}</div>}
+          {g.note && <div style={{ fontSize: 11, color: R, marginTop: 2, fontWeight: 600 }}>★ {g.note}</div>}
+          {g.done && g.scorers && g.scorers !== "—" && <div style={{ fontSize: 11, color: "var(--color-text-secondary, #777)", marginTop: 2 }}>⚽ {g.scorers}</div>}
+        </div>
+      </div>
+    </div>
+  );
 }
 
-renderN();
-renderC();
-loadRSS();
-</script>
-</body>
-</html>
+function TableRow({ row, isLib }) {
+  const zoneColor = ZONE_COLOR[row.zone];
+  return (
+    <tr style={{ background: row.flu ? "rgba(26,92,46,0.10)" : "transparent", fontWeight: row.flu ? 700 : 500 }}>
+      <td style={{ padding: "7px 4px", borderLeft: zoneColor && zoneColor !== "transparent" ? `3px solid ${zoneColor}` : "3px solid transparent", fontSize: 12, color: row.flu ? G : "var(--color-text-primary, #222)" }}>{row.pos}</td>
+      <td style={{ padding: "7px 4px", fontSize: 12, color: row.flu ? G : "var(--color-text-primary, #222)" }}>{row.team}</td>
+      <td style={{ padding: "7px 4px", fontSize: 12, fontWeight: 700, textAlign: "center", color: row.flu ? G : "var(--color-text-primary, #222)" }}>{row.p}</td>
+      <td style={{ padding: "7px 4px", fontSize: 11, textAlign: "center", color: "var(--color-text-secondary, #777)" }}>{row.j}</td>
+      <td style={{ padding: "7px 4px", fontSize: 11, textAlign: "center", color: "var(--color-text-secondary, #777)" }}>{row.v}</td>
+      <td style={{ padding: "7px 4px", fontSize: 11, textAlign: "center", color: "var(--color-text-secondary, #777)" }}>{row.e}</td>
+      <td style={{ padding: "7px 4px", fontSize: 11, textAlign: "center", color: "var(--color-text-secondary, #777)" }}>{row.d}</td>
+      <td style={{ padding: "7px 4px", fontSize: 11, textAlign: "center", color: row.sg > 0 ? G : row.sg < 0 ? R : "var(--color-text-secondary, #777)", fontWeight: 600 }}>{row.sg > 0 ? "+" : ""}{row.sg}</td>
+    </tr>
+  );
+}
+
+function Legend() {
+  return (
+    <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 12, fontSize: 10 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 4 }}><span style={{ width: 10, height: 10, background: ZONE_COLOR.lib, borderRadius: 2 }} /><span style={{ color: "var(--color-text-secondary)" }}>Libertadores</span></div>
+      <div style={{ display: "flex", alignItems: "center", gap: 4 }}><span style={{ width: 10, height: 10, background: ZONE_COLOR.preLib, borderRadius: 2 }} /><span style={{ color: "var(--color-text-secondary)" }}>Pré-Liberta</span></div>
+      <div style={{ display: "flex", alignItems: "center", gap: 4 }}><span style={{ width: 10, height: 10, background: ZONE_COLOR.sul, borderRadius: 2 }} /><span style={{ color: "var(--color-text-secondary)" }}>Sul-Americana</span></div>
+      <div style={{ display: "flex", alignItems: "center", gap: 4 }}><span style={{ width: 10, height: 10, background: ZONE_COLOR.reb, borderRadius: 2 }} /><span style={{ color: "var(--color-text-secondary)" }}>Rebaixamento</span></div>
+    </div>
+  );
+}
+
+function UpdateButton({ prompt, label, hint }) {
+  return (
+    <div style={{ textAlign: "center", marginTop: "1.5rem", paddingTop: "1rem", borderTop: "0.5px solid var(--color-border-tertiary, #e5e5e5)" }}>
+      <button onClick={() => window.sendPrompt && window.sendPrompt(prompt)} style={{ background: G, color: "white", border: "none", borderRadius: 8, padding: "10px 22px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+        {label}
+      </button>
+      <div style={{ color: "var(--color-text-secondary, #999)", fontSize: 11, marginTop: 6 }}>{hint}</div>
+    </div>
+  );
+}
+
+// ═════════════════ APP ═════════════════
+export default function FluNews() {
+  const [tab, setTab] = useState("Notícias");
+  const [saved, setSaved] = useState([]);
+  const [showSaved, setShowSaved] = useState(false);
+  const [filter, setFilter] = useState("Todas");
+
+  const toggleSave = (item) => {
+    setSaved((s) => s.find(n => n.title === item.title) ? s.filter(n => n.title !== item.title) : [...s, item]);
+  };
+
+  const cats = ["Todas", ...Array.from(new Set(NEWS.map(n => n.category)))];
+  const list = showSaved ? saved : NEWS;
+  const filtered = filter === "Todas" ? list : list.filter(n => n.category === filter);
+  const sorted = [...filtered].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+
+  return (
+    <div style={{ background: "var(--color-bg-000, #f4f4f4)", minHeight: "100vh", paddingBottom: 30 }}>
+      <Header />
+      <Tabs tab={tab} setTab={setTab} />
+
+      <div style={{ padding: "0 14px" }}>
+
+        {/* ─── NOTÍCIAS ─── */}
+        {tab === "Notícias" && (
+          <>
+            <MatchBanner />
+
+            {/* Síntese */}
+            <div style={{ background: "var(--color-bg-100, #fff)", borderRadius: 10, padding: 12, border: `0.5px solid var(--color-border-tertiary)`, borderLeft: `3px solid ${R}`, marginBottom: 14 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: R, letterSpacing: 1, marginBottom: 6 }}>SÍNTESE DO DIA</div>
+              <div style={{ fontSize: 12.5, color: "var(--color-text-primary)", lineHeight: 1.5 }}>
+                <strong>Dia decisivo:</strong> hoje (21h30) o Flu decide vaga nas oitavas da Copa do Brasil contra o Operário-PR. Pressão sobre Zubeldía após 4 jogos sem vitória (empate de 2x2 com o Vitória no fim de semana). No Brasileirão, time se mantém em 3º com 27 pts. Na Libertadores, situação dramática no Grupo C: 2 pts em 4 jogos, lanterna. <strong>Hulk</strong> já está no Rio e será apresentado sábado, antes de Fluminense x São Paulo.
+              </div>
+            </div>
+
+            {/* Toggle salvos */}
+            <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
+              <button onClick={() => setShowSaved(false)} style={{ flex: 1, padding: "7px 10px", background: !showSaved ? G : "var(--color-bg-200, #eee)", color: !showSaved ? "#fff" : "var(--color-text-secondary)", border: "none", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Todas ({NEWS.length})</button>
+              <button onClick={() => setShowSaved(true)} style={{ flex: 1, padding: "7px 10px", background: showSaved ? G : "var(--color-bg-200, #eee)", color: showSaved ? "#fff" : "var(--color-text-secondary)", border: "none", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>🏷️ Salvas ({saved.length})</button>
+            </div>
+
+            {/* Filtros de categoria */}
+            <div style={{ display: "flex", gap: 6, overflowX: "auto", paddingBottom: 8, marginBottom: 10, scrollbarWidth: "none" }}>
+              {cats.map(c => (
+                <button key={c} onClick={() => setFilter(c)} style={{ background: filter === c ? G : "var(--color-bg-100, #fff)", color: filter === c ? "#fff" : "var(--color-text-secondary)", border: `0.5px solid ${filter === c ? G : "var(--color-border-tertiary, #ddd)"}`, padding: "5px 11px", borderRadius: 14, fontSize: 11, fontWeight: 600, whiteSpace: "nowrap", cursor: "pointer", flexShrink: 0 }}>{c}</button>
+              ))}
+            </div>
+
+            {/* Lista */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {sorted.map((item, i) => <NewsCard key={i} item={item} saved={!!saved.find(n => n.title === item.title)} onSave={toggleSave} />)}
+            </div>
+            {showSaved && saved.length === 0 && <div style={{ textAlign: "center", padding: "2rem 0", color: "var(--color-text-secondary)", fontSize: 13 }}>Nenhuma notícia salva. Toque em 🔖 para salvar.</div>}
+
+            <UpdateButton prompt="Atualiza o FLUNEWS com as notícias mais recentes do Fluminense" label="Atualizar notícias" hint="Busca novas via Claude" />
+          </>
+        )}
+
+        {/* ─── CALENDÁRIO ─── */}
+        {tab === "Calendário" && (
+          <>
+            <div style={{ marginTop: 14 }}>
+              <Legend />
+              <div style={{ fontSize: 13, color: "var(--color-text-secondary)", marginBottom: 12, fontWeight: 600 }}>
+                📅 Maio 2026 — {CALENDAR.filter(g => !g.done).length} jogos restantes
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {CALENDAR.filter(g => !g.done).map((g, i) => <GameCard key={`up${i}`} g={g} />)}
+              </div>
+
+              <div style={{ fontSize: 12, fontWeight: 700, color: "var(--color-text-secondary)", marginTop: 22, marginBottom: 10, letterSpacing: 1 }}>JOGOS RECENTES</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {CALENDAR.filter(g => g.done).map((g, i) => <GameCard key={`done${i}`} g={g} />)}
+              </div>
+            </div>
+
+            <UpdateButton prompt="Atualiza o calendário do FLUNEWS com os próximos jogos, horários e resultados do Fluminense" label="Atualizar calendário" hint="Busca resultados e datas via Claude" />
+          </>
+        )}
+
+        {/* ─── CLASSIFICAÇÃO ─── */}
+        {tab === "Classificação" && (
+          <>
+            {/* Resumo Flu */}
+            <div style={{ marginTop: 14, display: "flex", gap: 8 }}>
+              <div style={{ flex: 1, background: "var(--color-bg-100, #fff)", borderRadius: 10, padding: 10, border: `0.5px solid var(--color-border-tertiary)`, borderTop: `3px solid #0066b3` }}>
+                <div style={{ fontSize: 10, color: "var(--color-text-secondary)", fontWeight: 700 }}>BRASILEIRÃO</div>
+                <div style={{ fontSize: 22, fontWeight: 800, color: G, marginTop: 2 }}>3º</div>
+                <div style={{ fontSize: 11, color: "var(--color-text-secondary)" }}>27 pts • 15 jogos</div>
+              </div>
+              <div style={{ flex: 1, background: "var(--color-bg-100, #fff)", borderRadius: 10, padding: 10, border: `0.5px solid var(--color-border-tertiary)`, borderTop: `3px solid ${G}` }}>
+                <div style={{ fontSize: 10, color: "var(--color-text-secondary)", fontWeight: 700 }}>LIBERTADORES (G.C)</div>
+                <div style={{ fontSize: 22, fontWeight: 800, color: R, marginTop: 2 }}>4º</div>
+                <div style={{ fontSize: 11, color: "var(--color-text-secondary)" }}>2 pts • 4 jogos</div>
+              </div>
+            </div>
+
+            {/* Brasileirão */}
+            <div style={{ marginTop: 18, marginBottom: 8, display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+              <div style={{ fontSize: 14, fontWeight: 800, color: "var(--color-text-primary)" }}>Brasileirão Série A</div>
+              <div style={{ fontSize: 11, color: "var(--color-text-secondary)" }}>após 15ª rodada</div>
+            </div>
+            <Legend />
+            <div style={{ background: "var(--color-bg-100, #fff)", borderRadius: 10, overflow: "hidden", border: `0.5px solid var(--color-border-tertiary)` }}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead style={{ background: "var(--color-bg-200, #f5f5f5)" }}>
+                  <tr>
+                    <th style={{ padding: "8px 4px", fontSize: 10, color: "var(--color-text-secondary)", textAlign: "left" }}>#</th>
+                    <th style={{ padding: "8px 4px", fontSize: 10, color: "var(--color-text-secondary)", textAlign: "left" }}>Time</th>
+                    <th style={{ padding: "8px 4px", fontSize: 10, color: "var(--color-text-secondary)" }}>P</th>
+                    <th style={{ padding: "8px 4px", fontSize: 10, color: "var(--color-text-secondary)" }}>J</th>
+                    <th style={{ padding: "8px 4px", fontSize: 10, color: "var(--color-text-secondary)" }}>V</th>
+                    <th style={{ padding: "8px 4px", fontSize: 10, color: "var(--color-text-secondary)" }}>E</th>
+                    <th style={{ padding: "8px 4px", fontSize: 10, color: "var(--color-text-secondary)" }}>D</th>
+                    <th style={{ padding: "8px 4px", fontSize: 10, color: "var(--color-text-secondary)" }}>SG</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {BR_TABLE.map((row) => <TableRow key={row.pos} row={row} />)}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Libertadores Grupo C */}
+            <div style={{ marginTop: 22, marginBottom: 8, display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+              <div style={{ fontSize: 14, fontWeight: 800, color: "var(--color-text-primary)" }}>Libertadores — Grupo C</div>
+              <div style={{ fontSize: 11, color: "var(--color-text-secondary)" }}>após 4ª rodada</div>
+            </div>
+            <div style={{ background: "var(--color-bg-100, #fff)", borderRadius: 10, overflow: "hidden", border: `0.5px solid var(--color-border-tertiary)` }}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead style={{ background: "var(--color-bg-200, #f5f5f5)" }}>
+                  <tr>
+                    <th style={{ padding: "8px 4px", fontSize: 10, color: "var(--color-text-secondary)", textAlign: "left" }}>#</th>
+                    <th style={{ padding: "8px 4px", fontSize: 10, color: "var(--color-text-secondary)", textAlign: "left" }}>Time</th>
+                    <th style={{ padding: "8px 4px", fontSize: 10, color: "var(--color-text-secondary)" }}>P</th>
+                    <th style={{ padding: "8px 4px", fontSize: 10, color: "var(--color-text-secondary)" }}>J</th>
+                    <th style={{ padding: "8px 4px", fontSize: 10, color: "var(--color-text-secondary)" }}>V</th>
+                    <th style={{ padding: "8px 4px", fontSize: 10, color: "var(--color-text-secondary)" }}>E</th>
+                    <th style={{ padding: "8px 4px", fontSize: 10, color: "var(--color-text-secondary)" }}>D</th>
+                    <th style={{ padding: "8px 4px", fontSize: 10, color: "var(--color-text-secondary)" }}>SG</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {LIB_GROUP.map((row) => <TableRow key={row.pos} row={row} isLib />)}
+                </tbody>
+              </table>
+            </div>
+
+            <div style={{ background: "rgba(198,40,40,0.08)", border: "0.5px solid rgba(198,40,40,0.3)", borderRadius: 8, padding: 10, marginTop: 12, fontSize: 11.5, color: "var(--color-text-primary)", lineHeight: 1.5 }}>
+              <strong style={{ color: R }}>⚠️ Cenário Libertadores:</strong> Flu precisa vencer Bolívar (20/05) e Dep. La Guaira (27/05) no Maracanã, e torcer por tropeço da Rivadavia ou Bolívar para avançar às oitavas. Empate em qualquer jogo praticamente elimina o time.
+            </div>
+
+            <UpdateButton prompt="Atualiza a classificação do FLUNEWS — Brasileirão e Libertadores Grupo C com os números mais recentes" label="Atualizar classificação" hint="Busca tabelas atualizadas via Claude" />
+          </>
+        )}
+
+      </div>
+    </div>
+  );
+}
